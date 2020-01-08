@@ -17,6 +17,8 @@ pub fn derive(input: TokenStream) -> TokenStream {
     let setters_trait = make_setters_trait(&item, &builder_name);
 
     let gen = quote! {
+        use std::error::Error;
+
         #struct_trait
 
         #builder_struct
@@ -81,9 +83,40 @@ fn make_setters_trait(source: &ItemStruct, builder_name: &Ident) -> proc_macro2:
         })
     }
 
+    let build_method = make_build_method(source, builder_name);
+
     quote! {
         impl #builder_name {
             #(#setters)*
+
+            #build_method
+        }
+    }
+}
+
+fn make_build_method(source: &ItemStruct, builder_name: &Ident) -> proc_macro2::TokenStream {
+    let source_name = &source.ident;
+    let mut checks = Vec::new();
+    let mut values = Vec::new();
+
+    for field in &source.fields {
+        let name = &field.ident;
+        checks.push(quote! {
+            #name: Some(#name),
+        });
+        values.push(quote! {
+            #name: #name,
+        });
+    }
+
+    quote! {
+        pub fn build(mut self) -> Result<#source_name, Box<dyn Error>> {
+            match self {
+                #builder_name { #(#checks)* } => Ok(#source_name { #(#values)* }),
+                _ => Err(From::from(format!(
+                    "missing some fields to build{}", stringify!(#source_name)
+                )))
+            }
         }
     }
 }
