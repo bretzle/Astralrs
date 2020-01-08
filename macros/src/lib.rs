@@ -77,8 +77,9 @@ fn make_setters_trait(source: &ItemStruct, builder_name: &Ident) -> proc_macro2:
         let type_ = &field.ty;
 
         setters.push(quote! {
-            fn #name(&mut self, #name: #type_) {
+            fn #name(mut self, #name: #type_) -> Self {
                 self.#name = Some(#name);
+                self
             }
         })
     }
