@@ -5,6 +5,7 @@ authors = ["johnf <johnfish218@gmail.com>"]
 edition = "2018"
 autotests = false
 publish = false
+workspace = ".."
 
 [lib]
 proc-macro = true
@@ -15,6 +16,7 @@ trybuild = "1.0"
 [dependencies]
 syn = { version="1.0.13", features=["full", "parsing"] }
 quote = "1.0.2"
+proc-macro2 = "1.0.7"
 
 [[test]]
 name = "tests"
