@@ -62,15 +62,36 @@ pub fn derive(input: TokenStream) -> TokenStream {
 }
 
 fn builder_def(data: &Vec<BuilderData>, builder_name: &Ident) -> proc_macro2::TokenStream {
-    quote!{}
+    let properties = data.iter().map(|d| builder_properties(d));
+
+    quote!{
+        pub struct #builder_name {
+            #(#properties),*
+        }
+    }
 }
 
 fn builder_constructor(data: &Vec<BuilderData>, builder_name: &Ident) -> proc_macro2::TokenStream {
-    quote!{}
+    let names = data.iter().map(|d| &d.ident);
+
+    quote!{
+        pub fn builder() -> #builder_name {
+            #builder_name {
+                #(#names: None),*
+            }
+        }
+    }
 }
 
 fn impl_builder(data: &Vec<BuilderData>, builder_name: &Ident, name: &Ident) -> proc_macro2::TokenStream {
-    quote!{}
+    let methods = data.iter().map(|d| builder_method(d));
+    let build = builder_build(data, name);
+    quote!{
+        impl #builder_name {
+            #(#methods)*
+            #build
+        }
+    }
 }
 
 fn get_builder_data(field: &Field) -> BuilderData {
@@ -159,4 +180,24 @@ fn is_builder_attr(path: &Path) -> bool {
     }
 
     is_builder
+}
+
+fn builder_properties(data: &BuilderData) -> proc_macro2::TokenStream {
+    let ty = data.ty;
+    let name = data.ident;
+    let newty = if data.is_optional {
+        quote!{#ty}
+    } else {
+        quote!{Option<#ty>}
+    };
+
+    quote!{#name: #newty}
+}
+
+fn builder_method(data: &BuilderData) -> proc_macro2::TokenStream {
+    quote!{}
+}
+
+fn builder_build(data: &Vec<BuilderData>, name: &Ident) -> proc_macro2::TokenStream {
+    quote!{}
 }
