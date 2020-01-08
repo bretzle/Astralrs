@@ -5,7 +5,10 @@ use proc_macro::TokenStream as Stream;
 use proc_macro2::TokenStream;
 use quote::quote;
 use std::error::Error;
-use syn::{parse, Field, GenericArgument, Ident, ItemStruct, Lit, Meta, MetaList, MetaNameValue, NestedMeta, PathArguments, Type};
+use syn::{
+    parse, Field, GenericArgument, Ident, ItemStruct, Lit, Meta, MetaList, MetaNameValue,
+    NestedMeta, PathArguments, Type,
+};
 
 enum MacroAttribute {
     Each,
