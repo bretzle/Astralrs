@@ -3,7 +3,8 @@ extern crate proc_macro2;
 
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse, Ident, ItemStruct};
+use std::error::Error;
+use syn::{parse, Ident, ItemStruct, Type};
 
 #[proc_macro_derive(Builder)]
 pub fn derive(input: TokenStream) -> TokenStream {
@@ -34,7 +35,10 @@ fn make_builder_struct(source: &ItemStruct, builder_name: &Ident) -> proc_macro2
 
     for field in &source.fields {
         let name = &field.ident;
-        let type_ = &field.ty;
+        let type_ = match get_option_type(&field.ty) {
+            Ok(t) => t,
+            Err(_) => field.ty.clone(),
+        };
         field_tokens.push(quote! {
             #name: Option<#type_>,
         });
@@ -50,7 +54,6 @@ fn make_builder_struct(source: &ItemStruct, builder_name: &Ident) -> proc_macro2
 fn make_struct_trait(source: &ItemStruct, builder_name: &Ident) -> proc_macro2::TokenStream {
     let mut fields = Vec::new();
     let source_name = &source.ident;
-    
     for field in &source.fields {
         let name = &field.ident;
         fields.push(quote! {
@@ -74,7 +77,10 @@ fn make_setters_trait(source: &ItemStruct, builder_name: &Ident) -> proc_macro2:
 
     for field in &source.fields {
         let name = &field.ident;
-        let type_ = &field.ty;
+        let type_ = match get_option_type(&field.ty) {
+            Ok(t) => t,
+            Err(_) => field.ty.clone()
+        };
 
         setters.push(quote! {
             fn #name(mut self, #name: #type_) -> Self {
@@ -84,7 +90,7 @@ fn make_setters_trait(source: &ItemStruct, builder_name: &Ident) -> proc_macro2:
         })
     }
 
-    let build_method = make_build_method(source, builder_name);
+    let build_method = make_build_method(source);
 
     quote! {
         impl #builder_name {
@@ -95,29 +101,71 @@ fn make_setters_trait(source: &ItemStruct, builder_name: &Ident) -> proc_macro2:
     }
 }
 
-fn make_build_method(source: &ItemStruct, builder_name: &Ident) -> proc_macro2::TokenStream {
-    let source_name = &source.ident;
+fn make_build_method(source: &ItemStruct) -> proc_macro2::TokenStream {
     let mut checks = Vec::new();
     let mut values = Vec::new();
+    
+    let source_name = &source.ident;
 
     for field in &source.fields {
         let name = &field.ident;
-        checks.push(quote! {
-            #name: Some(#name),
-        });
-        values.push(quote! {
-            #name: #name,
-        });
+    
+        values.push(quote! { #name: #name, });
+
+        checks.push(
+            match get_option_type(&field.ty) {
+                Ok(_) => quote!{ let #name = self.#name; },
+                Err(_) => quote!{
+                    let #name = match self.#name {
+                        Some(val) => val,
+                        None => return Err(From::from(format!("missing {} to build {}", stringify!(#name), stringify!(#source_name)))),
+                    };
+                },
+            }
+        );
     }
 
     quote! {
-        pub fn build(mut self) -> Result<#source_name, Box<dyn Error>> {
-            match self {
-                #builder_name { #(#checks)* } => Ok(#source_name { #(#values)* }),
-                _ => Err(From::from(format!(
-                    "missing some fields to build{}", stringify!(#source_name)
-                )))
-            }
+        fn build(mut self) -> Result<#source_name, Box<dyn Error>> {
+            #(#checks)*
+            Ok(#source_name { #(#values)* })
         }
     }
+}
+
+fn get_option_type(type_: &Type) -> Result<Type, Box<dyn Error>> {
+    match type_ {
+        Type::Path(typepath) if typepath.qself.is_none() && path_is_option(&typepath.path) => {
+            let type_params = match &typepath.path.segments.iter().next() {
+                Some(segment) => &segment.arguments,
+                None => return Err(From::from("failed to get first segment arg"))
+            };
+
+            let parameters = match type_params {
+                syn::PathArguments::AngleBracketed(params) => params,
+                _ => return Err(From::from("no angle brackets"))
+            };
+
+            let generic_arg = match parameters.args.iter().next() {
+                Some(arg) => arg,
+                None => return Err(From::from("failed to get generic argument"))
+            };
+
+            match generic_arg {
+                syn::GenericArgument::Type(ty) => Ok(ty.clone()),
+                _ => return Err(From::from("impossible to extract type"))
+            }
+        }
+        _ => Err(From::from("not an option")),
+    }
+}
+
+fn path_is_option(path: &syn::Path) -> bool {
+    if path.leading_colon.is_none() && path.segments.len() == 1 {
+        return match path.segments.iter().next() {
+            Some(segment) => &segment.ident == "Option",
+            None => false
+        };
+    }
+    return false;
 }
