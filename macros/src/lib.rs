@@ -2,18 +2,21 @@ extern crate proc_macro;
 
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::parse_macro_input;
+use syn::{
+    parse_macro_input, Attribute, Data, DataStruct, DeriveInput, Field, Fields, FieldsNamed,
+    GenericArgument, Ident, Lit, PathArguments, Type,
+};
 
 #[proc_macro_derive(Builder, attributes(builder))]
 pub fn derive(input: TokenStream) -> TokenStream {
-    let ast = parse_macro_input!(input as syn::DeriveInput);
+    let ast = parse_macro_input!(input as DeriveInput);
     let ident = &ast.ident;
 
     let builder_name = format!("{}Builder", ident);
-    let builder_ident = syn::Ident::new(&builder_name, ident.span());
+    let builder_ident = Ident::new(&builder_name, ident.span());
 
-    let fields = if let syn::Data::Struct(syn::DataStruct {
-        fields: syn::Fields::Named(syn::FieldsNamed { named, .. }),
+    let fields = if let Data::Struct(DataStruct {
+        fields: Fields::Named(FieldsNamed { named, .. }),
         ..
     }) = &ast.data
     {
@@ -114,7 +117,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
     expanded.into()
 }
 
-fn builder_of(f: &syn::Field) -> Option<&syn::Attribute> {
+fn builder_of(f: &Field) -> Option<&Attribute> {
     for attr in &f.attrs {
         if attr.path.segments.len() == 1 && attr.path.segments[0].ident == "builder" {
             return Some(attr);
@@ -129,7 +132,7 @@ macro_rules! err {
     };
 }
 
-fn get_each_method(f: &syn::Field) -> Option<(bool, proc_macro2::TokenStream)> {
+fn get_each_method(f: &Field) -> Option<(bool, proc_macro2::TokenStream)> {
     let name = &f.ident;
     let ty = &f.ty;
 
@@ -153,8 +156,8 @@ fn get_each_method(f: &syn::Field) -> Option<(bool, proc_macro2::TokenStream)> {
     }
 
     match &nv.lit {
-        syn::Lit::Str(s) => {
-            let ident = syn::Ident::new(&s.value(), s.span());
+        Lit::Str(s) => {
+            let ident = Ident::new(&s.value(), s.span());
             let inner_ty = get_inner_ty("Vec", ty).unwrap();
             let method = quote! {
                 pub fn #ident(&mut self, #ident: #inner_ty) -> &mut Self {
@@ -169,18 +172,18 @@ fn get_each_method(f: &syn::Field) -> Option<(bool, proc_macro2::TokenStream)> {
 }
 
 fn get_inner_ty<'a>(outer: &str, ty: &'a syn::Type) -> Option<&'a syn::Type> {
-    if let syn::Type::Path(p) = ty {
+    if let Type::Path(p) = ty {
         if p.path.segments.len() != 1 || p.path.segments[0].ident != outer {
             return None;
         }
 
-        if let syn::PathArguments::AngleBracketed(inner_ty) = &p.path.segments[0].arguments {
+        if let PathArguments::AngleBracketed(inner_ty) = &p.path.segments[0].arguments {
             if inner_ty.args.len() != 1 {
                 return None;
             }
 
             for arg in &inner_ty.args {
-                return if let syn::GenericArgument::Type(t) = arg {
+                return if let GenericArgument::Type(t) = arg {
                     Some(t)
                 } else {
                     None
