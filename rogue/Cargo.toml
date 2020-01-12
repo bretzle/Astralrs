@@ -10,3 +10,5 @@ workspace = ".."
 [dependencies]
 macros = { path = "../macros" }
 fractal = { path = "../fractal" }
+specs = "0.15.1"
+specs-derive = "0.4.0"
