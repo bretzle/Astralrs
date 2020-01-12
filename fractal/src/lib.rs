@@ -12,6 +12,9 @@
 
 //! The Fractal Engine
 
+
+pub mod color;
+
 /// Implement this trait on your state struct so the fractal will know what to
 /// call tick on
 pub trait GameState: 'static {
