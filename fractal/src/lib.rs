@@ -5,30 +5,30 @@
     unsafe_code,
     unstable_features,
     unused_import_braces,
-    unused_qualifications,
+    unused_qualifications
 )]
 
 //! The Fractal Engine
 
-
 pub mod color;
-pub mod fractal;
-pub mod font;
 pub mod console;
+pub mod font;
+pub mod fractal;
 pub mod graphics;
+mod simple_console;
 
+pub use fractal::Fractal;
 pub use glutin::event::VirtualKeyCode;
 pub use graphics::shader::*;
+pub use simple_console::SimpleConsole;
 
 /// Implement this trait on your state struct so the fractal will know what to
 /// call tick on
 pub trait GameState: 'static {
     /// Takes the current state and generate the next game state
-    fn tick(&mut self);
+    fn tick(&mut self, ctx: &mut Fractal);
 }
 
 #[derive(Debug, Copy, Clone)]
 /// Wrapper for an OpenGl Platform
-pub struct Platform {
-
-}
+pub struct Platform {}
