@@ -4,6 +4,9 @@ use crate::color;
 use crate::color::Color;
 use crate::console::Console;
 use crate::console::Tile;
+use crate::font::Font;
+use crate::graphics::shader::Shader;
+use crate::graphics::simple_backend::SimpleConsoleBackend;
 use crate::Platform;
 
 /// A simple console with background color.
@@ -14,6 +17,13 @@ pub struct SimpleConsole {
     pub height: u32,
     /// Vector of tiles. Each tile can render one character.
     pub tiles: Vec<Tile>,
+    /// is the console dirty
+    pub is_dirty: bool,
+    // To handle offset tiles for people who want thin walls between tiles
+    offset_x: f32,
+    offset_y: f32,
+    /// OpenGL backend
+    pub backend: SimpleConsoleBackend,
 }
 
 impl SimpleConsole {
@@ -34,7 +44,22 @@ impl SimpleConsole {
             width,
             height,
             tiles,
+            is_dirty: true,
+            offset_x: 0.0,
+            offset_y: 0.0,
+            backend: SimpleConsoleBackend::new(platform, width as usize, height as usize),
         })
+    }
+
+    fn rebuild_vertices(&mut self, platform: &Platform) {
+        self.backend.rebuild_vertices(
+            platform,
+            self.height,
+            self.width,
+            &self.tiles,
+            self.offset_x,
+            self.offset_y,
+        );
     }
 }
 
@@ -57,5 +82,21 @@ impl Console for SimpleConsole {
 
     fn at(&self, x: i32, y: i32) -> usize {
         (((self.height - 1 - y as u32) * self.width) + x as u32) as usize
+    }
+
+    fn draw(&mut self, font: &Font, shader: &Shader, platform: &Platform) {
+        self.backend
+            .draw(font, shader, platform, self.width, self.height);
+    }
+
+    fn resize_pixels(&mut self, _width: u32, _height: u32) {
+        self.is_dirty = true;
+    }
+
+    fn rebuild_if_dirty(&mut self, platform: &Platform) {
+        if self.is_dirty {
+            self.rebuild_vertices(platform);
+            self.is_dirty = false;
+        }
     }
 }

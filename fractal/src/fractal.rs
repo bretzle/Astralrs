@@ -195,10 +195,23 @@ impl Fractal {
 
 impl Console for Fractal {
     fn cls(&mut self) {
-        unimplemented!();
+        self.consoles[self.active_console].console.cls();
     }
 
     fn set(&mut self, x: i32, y: i32, fg: Color, bg: Color, glyph: u8) {
+        self.consoles[self.active_console].console.set(x, y, fg, bg, glyph);
+    }
+
+    fn draw(&mut self, font: &Font, shader: &Shader, platform: &Platform) {
         unimplemented!();
+    }
+
+    fn resize_pixels(&mut self, width: u32, height: u32) {
+        self.width_pixels = width;
+        self.height_pixels = height;
+
+        for c in self.consoles.iter_mut() {
+            c.console.resize_pixels(width, height);
+        }
     }
 }

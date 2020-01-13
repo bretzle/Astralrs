@@ -52,4 +52,19 @@ impl Shader {
 
         shader
     }
+
+    /// doc later
+    pub unsafe fn use_program(&self, gl: &glow::Context) {
+        gl.use_program(Some(self.id))
+    }
+
+    /// doc later
+    pub unsafe fn set_bool(&self, gl: &glow::Context, name: &str, value: bool) {
+        gl.uniform_1_i32(gl.get_uniform_location(self.id, name), value as i32);
+    }
+
+    /// doc later
+    pub unsafe fn set_vec3(&self, gl: &glow::Context, name: &str, x: f32, y: f32, z: f32) {
+        gl.uniform_3_f32(gl.get_uniform_location(self.id, name), x, y, z);
+    }
 }

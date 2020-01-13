@@ -44,6 +44,21 @@ impl Color {
         (self.0 & 255) as u8
     }
 
+    /// Gets the red component of the color.
+    pub const fn r_f(self) -> f32 {
+        (self.r() / 255) as f32
+    }
+
+    /// Gets the green component of the color.
+    pub const fn g_f(self) -> f32 {
+        (self.g() / 255) as f32
+    }
+
+    /// Gets the blue component of the color.
+    pub const fn b_f(self) -> f32 {
+        (self.b() / 255) as f32
+    }
+
     /// Returns a tuple of the RGB components of the color.
     pub const fn tuple(self) -> (u8, u8, u8) {
         (self.r(), self.g(), self.b())

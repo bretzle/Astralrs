@@ -67,4 +67,16 @@ impl Framebuffer {
             texture: buffer,
         }
     }
+
+    pub fn bind(&self, gl: &glow::Context) {
+        unsafe {
+            gl.bind_framebuffer(glow::FRAMEBUFFER, Some(self.fbo));
+        }
+    }
+
+    pub fn default(&self, gl: &glow::Context) {
+        unsafe {
+            gl.bind_framebuffer(glow::FRAMEBUFFER, None);
+        }
+    }
 }

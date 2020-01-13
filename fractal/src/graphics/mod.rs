@@ -9,6 +9,7 @@ use std::mem;
 
 pub mod framebuffer;
 pub mod shader_strings;
+pub mod simple_backend;
 
 pub struct PlatformGL {
     pub gl: glow::Context,
