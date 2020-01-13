@@ -55,7 +55,7 @@ fn new_map() -> Vec<TileType> {
     // First, obtain the thread-local RNG:
     let mut rng = fractal::RandomNumberGenerator::new();
 
-    for _i in 0..400 {
+    for _ in 0..400 {
         let x = rng.roll_dice(1, 79);
         let y = rng.roll_dice(1, 49);
         let idx = xy_idx(x, y);

@@ -21,6 +21,7 @@ mod graphics;
 mod simple_console;
 mod main_loop;
 mod embedding;
+mod random;
 
 use crate::graphics::PlatformGL;
 pub use fractal::Fractal;
@@ -30,6 +31,7 @@ pub use simple_console::SimpleConsole;
 pub use main_loop::main_loop;
 pub use console::Console;
 pub use graphics::shader_strings;
+pub use random::RandomNumberGenerator;
 
 /// Implement this trait on your state struct so the fractal will know what to
 /// call tick on
