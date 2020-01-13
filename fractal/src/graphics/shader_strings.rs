@@ -1,5 +1,6 @@
-#![allow(missing_docs)]
+//! Strings of some prebaked shaders
 
+/// 
 pub static BACKING_FS: &str = r#"#version 330 core
 out vec4 FragColor;
 in vec2 TexCoords;
@@ -10,6 +11,7 @@ void main()
     FragColor = vec4(col, 1.0);
 }"#;
 
+/// 
 pub static BACKING_VS: &str = r#"#version 330 core
 layout (location = 0) in vec2 aPos;
 layout (location = 1) in vec2 aTexCoords;
@@ -21,6 +23,7 @@ void main()
 }
 "#;
 
+/// 
 pub static CONSOLE_NO_BG_FS: &str = r#"#version 330 core
 out vec4 FragColor;
 in vec3 ourColor;
@@ -37,6 +40,7 @@ void main()
 }
 "#;
 
+/// 
 pub static CONSOLE_NO_BG_VS: &str = r#"#version 330 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aColor;
@@ -53,6 +57,7 @@ void main()
 	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 }"#;
 
+/// 
 pub static CONSOLE_WITH_BG_FS: &str = r#"#version 330 core
 out vec4 FragColor;
 in vec3 ourColor;
@@ -68,6 +73,7 @@ void main()
 }
 "#;
 
+/// 
 pub static CONSOLE_WITH_BG_VS: &str = r#"#version 330 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aColor;
@@ -84,6 +90,7 @@ void main()
 	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 }"#;
 
+/// 
 pub static SCANLINES_FS: &str = r#"#version 330 core
 out vec4 FragColor;
 in vec2 TexCoords;
@@ -107,6 +114,7 @@ void main()
     }
 }"#;
 
+/// 
 pub static SCANLINES_VS: &str = r#"#version 330 core
 layout (location = 0) in vec2 aPos;
 layout (location = 1) in vec2 aTexCoords;

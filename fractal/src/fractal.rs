@@ -21,9 +21,9 @@ pub struct DisplayConsole {
     ///
     pub console: Box<dyn Console>,
     ///
-    pub shader_index: usize,
-    ///
     pub font_index: usize,
+    ///
+    pub shader_index: usize,
 }
 
 /// Acts as a context for the engine
@@ -184,7 +184,12 @@ impl Fractal {
 
     /// Regjsters a console with the engine.
     pub fn register_console(&mut self, new_console: Box<dyn Console>, font_index: usize) -> usize {
-        unimplemented!()
+        self.consoles.push(DisplayConsole {
+            console: new_console,
+            font_index,
+            shader_index: 0,
+        });
+        self.consoles.len() - 1
     }
 }
 
