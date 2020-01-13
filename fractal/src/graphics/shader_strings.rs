@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 pub static BACKING_FS: &str = r#"#version 330 core
 out vec4 FragColor;
 in vec2 TexCoords;

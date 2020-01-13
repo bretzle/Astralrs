@@ -176,7 +176,10 @@ impl Fractal {
 
     /// Registers a font with the engine.
     pub fn register_font(&mut self, mut font: Font) -> usize {
-        unimplemented!()
+        font.setup_gl_texture(&self.backend);
+        font.bind_texture(&self.backend);
+        self.fonts.push(font);
+        self.fonts.len() - 1
     }
 
     /// Regjsters a console with the engine.
