@@ -1,5 +1,6 @@
 //! A simple implementation of [Console]
 
+use crate::color::Color;
 use crate::console::Console;
 use crate::Platform;
 
@@ -18,4 +19,12 @@ impl SimpleConsole {
     }
 }
 
-impl Console for SimpleConsole {}
+impl Console for SimpleConsole {
+    fn cls(&mut self) {
+        unimplemented!();
+    }
+
+    fn set(&mut self, x: i32, y: i32, fg: Color, bg: Color, glyph: u8) {
+        unimplemented!();
+    }
+}
