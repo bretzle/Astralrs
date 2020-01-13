@@ -3,6 +3,8 @@
 use fractal::color::{self, Color};
 use fractal::{Console, Fractal, GameState};
 use specs::prelude::*;
+use fractal::VirtualKeyCode;
+use std::cmp::*;
 
 #[macro_use]
 extern crate specs_derive;
@@ -22,14 +24,42 @@ struct Renderable {
 
 #[derive(Component)]
 struct LeftMover {}
+
 struct State {
     ecs: World,
+}
+
+#[derive(Component, Debug)]
+struct Player {}
+
+fn try_move_player(dx: i32, dy: i32, ecs: &mut World) {
+    let mut positions = ecs.write_storage::<Position>();
+    let mut players = ecs.write_storage::<Player>();
+
+    for (_player, pos) in (&mut players, &mut positions).join() {
+        pos.x = min(79 , max(0, pos.x + dx));
+        pos.y = min(49, max(0, pos.y + dy));
+    }
+}
+
+fn player_input(gs: &mut State, ctx: &mut Fractal) {
+    match ctx.key {
+        Some(key) => match key {
+            VirtualKeyCode::Left => try_move_player(-1, 0, &mut gs.ecs),
+            VirtualKeyCode::Right => try_move_player(1, 0, &mut gs.ecs),
+            VirtualKeyCode::Up => try_move_player(0, -1, &mut gs.ecs),
+            VirtualKeyCode::Down => try_move_player(0, 1, &mut gs.ecs),
+            _ => {}
+        }
+        None => {}
+    }
 }
 
 impl GameState for State {
     fn tick(&mut self, ctx: &mut Fractal) {
         ctx.cls();
 
+        player_input(self, ctx);
         self.run_systems();
 
         let positions = self.ecs.read_storage::<Position>();
@@ -70,6 +100,7 @@ fn main() {
     gs.ecs.register::<Position>();
     gs.ecs.register::<Renderable>();
     gs.ecs.register::<LeftMover>();
+    gs.ecs.register::<Player>();
 
     gs.ecs
         .create_entity()
@@ -79,6 +110,7 @@ fn main() {
             fg: color::YELLOW,
             bg: color::BLACK,
         })
+        .with(Player{})
         .build();
 
     for i in 0..10 {

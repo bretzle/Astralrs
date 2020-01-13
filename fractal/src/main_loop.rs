@@ -96,27 +96,27 @@ pub fn main_loop<GS: GameState>(mut frac: Fractal, mut gamestate: GS) {
                     frac.left_click = true;
                 }
 
-                // WindowEvent::KeyboardInput {
-                //     input:
-                //         glutin::event::KeyboardInput {
-                //             virtual_keycode: Some(virtual_keycode),
-                //             state: glutin::event::ElementState::Pressed,
-                //             modifiers,
-                //             ..
-                //         },
-                //     ..
-                // } => {
-                //     frac.key = Some(*virtual_keycode);
-                //     if modifiers.shift() {
-                //         frac.shift = true;
-                //     }
-                //     if modifiers.alt() {
-                //         frac.alt = true;
-                //     }
-                //     if modifiers.ctrl() {
-                //         frac.control = true;
-                //     }
-                // }
+                WindowEvent::KeyboardInput {
+                    input:
+                        glutin::event::KeyboardInput {
+                            virtual_keycode: Some(virtual_keycode),
+                            state: glutin::event::ElementState::Pressed,
+                            modifiers,
+                            ..
+                        },
+                    ..
+                } => {
+                    frac.key = Some(*virtual_keycode);
+                    if modifiers.shift() {
+                        frac.shift = true;
+                    }
+                    if modifiers.alt() {
+                        frac.alt = true;
+                    }
+                    if modifiers.ctrl() {
+                        frac.control = true;
+                    }
+                }
 
                 _ => (),
             },
