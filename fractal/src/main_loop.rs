@@ -15,13 +15,13 @@ use crate::Console;
 const TICK_TYPE: ControlFlow = ControlFlow::Poll;
 
 /// The main loop
-pub fn main_loop<GS: GameState>(mut rltk: Fractal, mut gamestate: GS) {
+pub fn main_loop<GS: GameState>(mut frac: Fractal, mut gamestate: GS) {
     unsafe {
-        rltk.backend.platform.gl.viewport(
+        frac.backend.platform.gl.viewport(
             0,
             0,
-            rltk.width_pixels as i32,
-            rltk.height_pixels as i32,
+            frac.width_pixels as i32,
+            frac.height_pixels as i32,
         );
     }
     let now = Instant::now();
@@ -30,8 +30,8 @@ pub fn main_loop<GS: GameState>(mut rltk: Fractal, mut gamestate: GS) {
     let mut frames = 0;
 
     // We're doing a little dance here to get around lifetime/borrow checking.
-    // Removing the context data from RLTK in an atomic swap, so it isn't borrowed after move.
-    let wrap = std::mem::replace(&mut rltk.backend.platform.context_wrapper, None);
+    // Removing the context data from Fractal in an atomic swap, so it isn't borrowed after move.
+    let wrap = std::mem::replace(&mut frac.backend.platform.context_wrapper, None);
     let unwrap = wrap.unwrap();
 
     let el = unwrap.el;
@@ -40,21 +40,21 @@ pub fn main_loop<GS: GameState>(mut rltk: Fractal, mut gamestate: GS) {
     el.run(move |event, _, control_flow| {
         *control_flow = TICK_TYPE;
 
-        if rltk.quitting {
+        if frac.quitting {
             *control_flow = ControlFlow::Exit;
         }
 
         match event {
             Event::NewEvents(_) => {
-                rltk.left_click = false;
-                rltk.key = None;
-                rltk.shift = false;
-                rltk.control = false;
-                rltk.alt = false;
+                frac.left_click = false;
+                frac.key = None;
+                frac.shift = false;
+                frac.control = false;
+                frac.alt = false;
             }
             Event::MainEventsCleared => {
                 tock(
-                    &mut rltk,
+                    &mut frac,
                     &mut gamestate,
                     &mut frames,
                     &mut prev_seconds,
@@ -66,59 +66,57 @@ pub fn main_loop<GS: GameState>(mut rltk: Fractal, mut gamestate: GS) {
             Event::LoopDestroyed => (),
             Event::WindowEvent { ref event, .. } => match event {
                 WindowEvent::Resized(physical_size) => {
-                    // Commenting out to see if it helps the Linux world
-                    //let dpi_factor = wc.window().hidpi_factor();
                     wc.resize(*physical_size);
-                    rltk.resize_pixels(physical_size.width, physical_size.height);
+                    frac.resize_pixels(physical_size.width, physical_size.height);
                     unsafe {
-                        rltk.backend.platform.gl.viewport(
+                        frac.backend.platform.gl.viewport(
                             0,
                             0,
                             physical_size.width as i32,
                             physical_size.height as i32,
                         );
                     }
-                    rltk.backend.platform.backing_buffer = Framebuffer::build_fbo(
-                        &rltk.backend.platform.gl,
+                    frac.backend.platform.backing_buffer = Framebuffer::build_fbo(
+                        &frac.backend.platform.gl,
                         physical_size.width as i32,
                         physical_size.height as i32,
                     );
                 }
                 /*WindowEvent::RedrawRequested => {
-                    //tock(&mut rltk, &mut gamestate, &mut frames, &mut prev_seconds, &mut prev_ms, &now);
+                    //tock(&mut frac, &mut gamestate, &mut frames, &mut prev_seconds, &mut prev_ms, &now);
                     wc.swap_buffers().unwrap();
                 }*/
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
 
                 WindowEvent::CursorMoved { position: pos, .. } => {
-                    rltk.mouse_pos = (pos.x, pos.y);
+                    frac.mouse_pos = (pos.x, pos.y);
                 }
 
                 WindowEvent::MouseInput { .. } => {
-                    rltk.left_click = true;
+                    frac.left_click = true;
                 }
 
-                WindowEvent::KeyboardInput {
-                    input:
-                        glutin::event::KeyboardInput {
-                            virtual_keycode: Some(virtual_keycode),
-                            state: glutin::event::ElementState::Pressed,
-                            modifiers,
-                            ..
-                        },
-                    ..
-                } => {
-                    rltk.key = Some(*virtual_keycode);
-                    if modifiers.shift() {
-                        rltk.shift = true;
-                    }
-                    if modifiers.alt() {
-                        rltk.alt = true;
-                    }
-                    if modifiers.ctrl() {
-                        rltk.control = true;
-                    }
-                }
+                // WindowEvent::KeyboardInput {
+                //     input:
+                //         glutin::event::KeyboardInput {
+                //             virtual_keycode: Some(virtual_keycode),
+                //             state: glutin::event::ElementState::Pressed,
+                //             modifiers,
+                //             ..
+                //         },
+                //     ..
+                // } => {
+                //     frac.key = Some(*virtual_keycode);
+                //     if modifiers.shift() {
+                //         frac.shift = true;
+                //     }
+                //     if modifiers.alt() {
+                //         frac.alt = true;
+                //     }
+                //     if modifiers.ctrl() {
+                //         frac.control = true;
+                //     }
+                // }
 
                 _ => (),
             },
@@ -129,7 +127,7 @@ pub fn main_loop<GS: GameState>(mut rltk: Fractal, mut gamestate: GS) {
 
 /// Internal handling of the main loop.
 fn tock<GS: GameState>(
-    rltk: &mut Fractal,
+    frac: &mut Fractal,
     gamestate: &mut GS,
     frames: &mut i32,
     prev_seconds: &mut u64,
@@ -140,78 +138,78 @@ fn tock<GS: GameState>(
     *frames += 1;
 
     if now_seconds > *prev_seconds {
-        rltk.fps = *frames as f32 / (now_seconds - *prev_seconds) as f32;
+        frac.fps = *frames as f32 / (now_seconds - *prev_seconds) as f32;
         *frames = 0;
         *prev_seconds = now_seconds;
     }
 
     let now_ms = now.elapsed().as_millis();
     if now_ms > *prev_ms {
-        rltk.frame_time_ms = (now_ms - *prev_ms) as f32;
+        frac.frame_time_ms = (now_ms - *prev_ms) as f32;
         *prev_ms = now_ms;
     }
 
-    gamestate.tick(rltk);
+    gamestate.tick(frac);
 
     // Console structure - doesn't really have to be every frame...
-    for cons in &mut rltk.consoles {
-        cons.console.rebuild_if_dirty(&rltk.backend);
+    for cons in &mut frac.consoles {
+        cons.console.rebuild_if_dirty(&frac.backend);
     }
 
     // Bind to the backing buffer
-    if rltk.post_scanlines {
-        rltk.backend
+    if frac.post_scanlines {
+        frac.backend
             .platform
             .backing_buffer
-            .bind(&rltk.backend.platform.gl);
+            .bind(&frac.backend.platform.gl);
     }
 
     // Clear the screen
     unsafe {
-        rltk.backend.platform.gl.clear_color(0.0, 0.0, 0.0, 1.0);
-        rltk.backend.platform.gl.clear(glow::COLOR_BUFFER_BIT);
+        frac.backend.platform.gl.clear_color(0.0, 0.0, 0.0, 1.0);
+        frac.backend.platform.gl.clear(glow::COLOR_BUFFER_BIT);
     }
 
     // Tell each console to draw itself
-    for cons in &mut rltk.consoles {
-        let font = &rltk.fonts[cons.font_index];
-        let shader = &rltk.shaders[cons.shader_index];
-        cons.console.draw(font, shader, &rltk.backend);
+    for cons in &mut frac.consoles {
+        let font = &frac.fonts[cons.font_index];
+        let shader = &frac.shaders[cons.shader_index];
+        cons.console.draw(font, shader, &frac.backend);
     }
 
-    if rltk.post_scanlines {
+    if frac.post_scanlines {
         // Now we return to the primary screen
-        rltk.backend
+        frac.backend
             .platform
             .backing_buffer
-            .default(&rltk.backend.platform.gl);
+            .default(&frac.backend.platform.gl);
         unsafe {
-            if rltk.post_scanlines {
-                rltk.shaders[3].use_program(&rltk.backend.platform.gl);
-                rltk.shaders[3].set_vec3(
-                    &rltk.backend.platform.gl,
+            if frac.post_scanlines {
+                frac.shaders[3].use_program(&frac.backend.platform.gl);
+                frac.shaders[3].set_vec3(
+                    &frac.backend.platform.gl,
                     "screenSize",
-                    rltk.width_pixels as f32,
-                    rltk.height_pixels as f32,
+                    frac.width_pixels as f32,
+                    frac.height_pixels as f32,
                     0.0,
                 );
-                rltk.shaders[3].set_bool(
-                    &rltk.backend.platform.gl,
+                frac.shaders[3].set_bool(
+                    &frac.backend.platform.gl,
                     "screenBurn",
-                    rltk.post_screenburn,
+                    frac.post_screenburn,
                 );
             } else {
-                rltk.shaders[2].use_program(&rltk.backend.platform.gl);
+                frac.shaders[2].use_program(&frac.backend.platform.gl);
             }
-            rltk.backend
+            frac.backend
                 .platform
                 .gl
-                .bind_vertex_array(Some(rltk.backend.platform.quad_vao));
-            rltk.backend.platform.gl.bind_texture(
+                .bind_vertex_array(Some(frac.backend.platform.quad_vao));
+            frac.backend.platform.gl.bind_texture(
                 glow::TEXTURE_2D,
-                Some(rltk.backend.platform.backing_buffer.texture),
+                Some(frac.backend.platform.backing_buffer.texture),
             );
-            rltk.backend.platform.gl.draw_arrays(glow::TRIANGLES, 0, 6);
+            frac.backend.platform.gl.draw_arrays(glow::TRIANGLES, 0, 6);
         }
     }
 }

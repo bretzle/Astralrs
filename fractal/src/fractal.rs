@@ -202,10 +202,6 @@ impl Console for Fractal {
         self.consoles[self.active_console].console.set(x, y, fg, bg, glyph);
     }
 
-    fn draw(&mut self, font: &Font, shader: &Shader, platform: &Platform) {
-        unimplemented!();
-    }
-
     fn resize_pixels(&mut self, width: u32, height: u32) {
         self.width_pixels = width;
         self.height_pixels = height;

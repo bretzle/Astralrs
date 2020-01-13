@@ -65,6 +65,7 @@ impl SimpleConsole {
 
 impl Console for SimpleConsole {
     fn cls(&mut self) {
+        self.is_dirty = true;
         for tile in &mut self.tiles {
             tile.glyph = 32;
             tile.fg = color::WHITE;
@@ -85,8 +86,8 @@ impl Console for SimpleConsole {
     }
 
     fn draw(&mut self, font: &Font, shader: &Shader, platform: &Platform) {
-        self.backend
-            .draw(font, shader, platform, self.width, self.height);
+        self.backend.draw(font, shader, platform, self.width, self.height);
+        self.is_dirty = false;
     }
 
     fn resize_pixels(&mut self, _width: u32, _height: u32) {
