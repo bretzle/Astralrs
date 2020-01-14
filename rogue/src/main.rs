@@ -6,6 +6,7 @@ extern crate specs_derive;
 mod components;
 mod map;
 mod player;
+mod rect;
 
 use crate::components::*;
 use crate::map::*;
@@ -51,11 +52,16 @@ fn main() {
     gs.ecs.register::<Renderable>();
     gs.ecs.register::<Player>();
 
-    gs.ecs.insert(new_map());
+    let (rooms, map) = new_map();
+    gs.ecs.insert(map);
+    let (player_x, player_y) = rooms[0].center();
 
     gs.ecs
         .create_entity()
-        .with(Position { x: 40, y: 25 })
+        .with(Position {
+            x: player_x,
+            y: player_y,
+        })
         .with(Renderable {
             glyph: fractal::to_keycode('@'),
             fg: color::YELLOW,
