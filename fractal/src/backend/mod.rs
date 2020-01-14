@@ -3,11 +3,13 @@
 //! Module for all graphics
 
 pub mod shader;
-use crate::graphics::framebuffer::Framebuffer;
+use crate::backend::framebuffer::Framebuffer;
 use glow::HasContext;
 use std::mem;
 
+pub mod font;
 pub mod framebuffer;
+pub mod main_loop;
 pub mod shader_strings;
 pub mod simple_backend;
 

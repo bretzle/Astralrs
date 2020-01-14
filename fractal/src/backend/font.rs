@@ -4,8 +4,8 @@
 
 use crate::embedding;
 use crate::Platform;
-use image::{ColorType, GenericImageView};
 use glow::HasContext;
+use image::{ColorType, GenericImageView};
 
 #[derive(Debug, Clone, PartialEq)]
 /// Represents a font

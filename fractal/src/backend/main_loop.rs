@@ -2,15 +2,15 @@
 
 //! Main loop
 
+use crate::backend::framebuffer::Framebuffer;
 use crate::fractal::Fractal;
+use crate::Console;
 use crate::GameState;
 use glow::HasContext;
 use glutin::event::Event;
 use glutin::event::WindowEvent;
 use glutin::event_loop::ControlFlow;
 use std::time::Instant;
-use crate::graphics::framebuffer::Framebuffer;
-use crate::Console;
 
 const TICK_TYPE: ControlFlow = ControlFlow::Poll;
 

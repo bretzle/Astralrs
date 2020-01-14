@@ -1,9 +1,9 @@
 //! A simple OpenGL backend implementation
 
+use crate::backend::font::Font;
+use crate::backend::shader::Shader;
 use crate::color::Color;
 use crate::console::Tile;
-use crate::font::Font;
-use crate::graphics::shader::Shader;
 use crate::Platform;
 use glow::HasContext;
 use std::mem;

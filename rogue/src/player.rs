@@ -1,5 +1,5 @@
-use crate::map::Map;
 use crate::components::*;
+use crate::map::Map;
 use crate::map::TileType;
 use crate::State;
 use fractal::Fractal;

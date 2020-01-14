@@ -94,6 +94,7 @@ impl From<i32> for Color {
     }
 }
 
+/// TODO remove duplicates
 color! {
     SNOW, (255, 250, 250);
     GHOST_WHITE, (248, 248, 255);

@@ -1,8 +1,8 @@
 //! Console
 
+use crate::backend::font::Font;
+use crate::backend::shader::Shader;
 use crate::color::Color;
-use crate::font::Font;
-use crate::graphics::shader::Shader;
 use crate::Platform;
 
 /// Represents an internal storage type for a character in a console

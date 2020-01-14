@@ -13,25 +13,24 @@
 #[macro_use]
 extern crate lazy_static;
 
+mod backend;
 pub mod color;
 mod console;
-mod font;
-mod fractal;
-mod graphics;
-mod simple_console;
-mod main_loop;
 mod embedding;
+mod fractal;
 mod random;
+mod simple_console;
 
-use crate::graphics::PlatformGL;
+use crate::backend::PlatformGL;
+pub use backend::main_loop;
+pub use backend::main_loop::main_loop;
+pub use backend::shader::*;
+pub use backend::shader_strings;
+pub use console::Console;
 pub use fractal::Fractal;
 pub use glutin::event::VirtualKeyCode;
-pub use graphics::shader::*;
-pub use simple_console::SimpleConsole;
-pub use main_loop::main_loop;
-pub use console::Console;
-pub use graphics::shader_strings;
 pub use random::RandomNumberGenerator;
+pub use simple_console::SimpleConsole;
 
 /// Implement this trait on your state struct so the fractal will know what to
 /// call tick on

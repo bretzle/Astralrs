@@ -2,17 +2,17 @@
 
 //! The main engine
 
-use crate::graphics::setup_quad;
-use crate::graphics::WrappedContext;
-use crate::graphics::PlatformGL;
+use crate::backend::font::Font;
+use crate::backend::framebuffer::Framebuffer;
+use crate::backend::setup_quad;
+use crate::backend::shader::Shader;
+use crate::backend::shader_strings;
+use crate::backend::PlatformGL;
+use crate::backend::WrappedContext;
 use crate::color::Color;
 use crate::console::Console;
-use crate::font::Font;
-use crate::graphics::shader::Shader;
 use crate::Platform;
 use crate::SimpleConsole;
-use crate::graphics::shader_strings;
-use crate::graphics::framebuffer::Framebuffer;
 use glutin::event::VirtualKeyCode;
 use glutin::{dpi::LogicalSize, event_loop::EventLoop, window::WindowBuilder, ContextBuilder};
 
@@ -108,7 +108,7 @@ impl Fractal {
         let windowed_context = unsafe { windowed_context.make_current().unwrap() };
 
         let gl = glow::Context::from_loader_function(|ptr| {
-            windowed_context.get_proc_address(ptr)// as *const _
+            windowed_context.get_proc_address(ptr) // as *const _
         });
 
         // Load our basic shaders
@@ -199,7 +199,9 @@ impl Console for Fractal {
     }
 
     fn set(&mut self, x: i32, y: i32, fg: Color, bg: Color, glyph: u8) {
-        self.consoles[self.active_console].console.set(x, y, fg, bg, glyph);
+        self.consoles[self.active_console]
+            .console
+            .set(x, y, fg, bg, glyph);
     }
 
     fn resize_pixels(&mut self, width: u32, height: u32) {

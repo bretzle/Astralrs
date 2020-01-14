@@ -1,12 +1,12 @@
 //! A simple implementation of [Console]
 
+use crate::backend::font::Font;
+use crate::backend::shader::Shader;
+use crate::backend::simple_backend::SimpleConsoleBackend;
 use crate::color;
 use crate::color::Color;
 use crate::console::Console;
 use crate::console::Tile;
-use crate::font::Font;
-use crate::graphics::shader::Shader;
-use crate::graphics::simple_backend::SimpleConsoleBackend;
 use crate::Platform;
 
 /// A simple console with background color.
@@ -86,7 +86,8 @@ impl Console for SimpleConsole {
     }
 
     fn draw(&mut self, font: &Font, shader: &Shader, platform: &Platform) {
-        self.backend.draw(font, shader, platform, self.width, self.height);
+        self.backend
+            .draw(font, shader, platform, self.width, self.height);
         self.is_dirty = false;
     }
 

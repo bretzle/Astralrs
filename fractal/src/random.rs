@@ -11,7 +11,7 @@ pub struct RandomNumberGenerator {
 impl RandomNumberGenerator {
     /// Create a new RanfomNumberGenerator instance
     pub fn new() -> Self {
-        Self { 
+        Self {
             rng: SeedableRng::from_entropy(),
         }
     }
