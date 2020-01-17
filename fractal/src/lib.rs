@@ -15,6 +15,7 @@ extern crate lazy_static;
 
 mod backend;
 pub mod color;
+mod fov;
 mod console;
 mod embedding;
 mod fractal;
@@ -32,6 +33,7 @@ pub use fractal::Fractal;
 pub use glutin::event::VirtualKeyCode;
 pub use random::RandomNumberGenerator;
 pub use simple_console::SimpleConsole;
+pub use fov::*;
 
 /// Implement this trait on your state struct so the fractal will know what to
 /// call tick on

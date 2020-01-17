@@ -1,5 +1,6 @@
 //! A Helper class
 
+#[derive(Eq, PartialEq, Copy, Clone, Debug, Hash)]
 /// Helper struct defining a 2D point in space.
 pub struct Point {
     /// The x position
