@@ -18,6 +18,7 @@ pub mod color;
 mod console;
 mod embedding;
 mod fractal;
+pub mod geometry;
 mod random;
 mod simple_console;
 

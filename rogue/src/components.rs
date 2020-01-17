@@ -1,5 +1,6 @@
 use fractal::color::Color;
 use specs::prelude::*;
+use crate::geometry::point::Point;
 
 #[derive(Component)]
 pub struct Position {
@@ -16,3 +17,10 @@ pub struct Renderable {
 
 #[derive(Component, Debug)]
 pub struct Player {}
+
+#[derive(Component)]
+pub struct Viewshed {
+    pub visible_tiles: Vec<Point>,
+    pub range: i32,
+    pub dirty: bool,
+}

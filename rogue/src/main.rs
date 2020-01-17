@@ -7,6 +7,7 @@ mod components;
 mod map;
 mod player;
 mod rect;
+mod visibility_system;
 
 use crate::components::*;
 use crate::map::*;
