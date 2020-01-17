@@ -12,6 +12,7 @@ mod visibility_system;
 use crate::components::*;
 use crate::map::*;
 use crate::player::*;
+use crate::visibility_system::VisibilitySystem;
 use fractal::Fractal;
 use fractal::GameState;
 use fractal::*;
@@ -19,6 +20,14 @@ use specs::prelude::*;
 
 pub struct State {
     pub ecs: World,
+}
+
+impl State {
+    fn run_systems(&mut self) {
+        let mut vis = VisibilitySystem {};
+        vis.run_now(&self.ecs);
+        self.ecs.maintain();
+    }
 }
 
 impl GameState for State {
@@ -39,20 +48,16 @@ impl GameState for State {
     }
 }
 
-impl State {
-    fn run_systems(&mut self) {
-        self.ecs.maintain();
-    }
-}
-
 fn main() {
     let context = Fractal::init_simple(80, 50, "Hello Rust World", "resources");
     let mut gs = State { ecs: World::new() };
+
     gs.ecs.register::<Position>();
     gs.ecs.register::<Renderable>();
     gs.ecs.register::<Player>();
+    gs.ecs.register::<Viewshed>();
 
-    let map = Map::new_map();
+    let map: Map = Map::new_map_rooms_and_corridors();
     let (player_x, player_y) = map.rooms[0].center();
     gs.ecs.insert(map);
 
@@ -68,6 +73,11 @@ fn main() {
             bg: color::BLACK,
         })
         .with(Player {})
+        .with(Viewshed {
+            visible_tiles: Vec::new(),
+            range: 10,
+            dirty: true,
+        })
         .build();
 
     fractal::main_loop(context, gs);

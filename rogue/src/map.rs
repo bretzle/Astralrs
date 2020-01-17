@@ -1,4 +1,6 @@
 use crate::rect::Rect;
+use fractal::color;
+use fractal::color::Color;
 use fractal::geometry::point::Point;
 use fractal::geometry::Algorithm2D;
 use fractal::geometry::BaseMap;
@@ -15,6 +17,7 @@ pub enum TileType {
     Floor,
 }
 
+#[derive(Default)]
 pub struct Map {
     pub tiles: Vec<TileType>,
     pub rooms: Vec<Rect>,
@@ -26,7 +29,7 @@ pub struct Map {
 
 impl Map {
     pub fn xy_idx(&self, x: i32, y: i32) -> usize {
-        (y as usize * 80) + x as usize
+        (y as usize * self.width as usize) + x as usize
     }
 
     fn apply_room_to_map(&mut self, room: &Rect) {
@@ -50,13 +53,15 @@ impl Map {
     fn apply_vertical_tunnel(&mut self, y1: i32, y2: i32, x: i32) {
         for y in min(y1, y2)..=max(y1, y2) {
             let idx = self.xy_idx(x, y);
-            if idx > 0 && idx < 80 * 50 {
+            if idx > 0 && idx < self.width as usize * self.height as usize {
                 self.tiles[idx as usize] = TileType::Floor;
             }
         }
     }
 
-    pub fn new_map() -> Self {
+    /// Makes a new map using the algorithm from http://rogueliketutorials.com/tutorials/tcod/part-3/
+    /// This gives a handful of random rooms and corridors joining them together.
+    pub fn new_map_rooms_and_corridors() -> Map {
         let mut map = Map {
             tiles: vec![TileType::Wall; 80 * 50],
             rooms: Vec::new(),
@@ -145,28 +150,28 @@ pub fn draw_map(ecs: &World, ctx: &mut Fractal) {
 
     let mut y = 0;
     let mut x = 0;
+    let mut glyph;
+    let mut fg;
 
-    for tile in map.tiles.iter() {
+    for (idx, tile) in map.tiles.iter().enumerate() {
         // Render a tile depending upon the tile type
-        match tile {
-            TileType::Floor => {
-                ctx.set(
-                    x,
-                    y,
-                    (127, 127, 127).into(),
-                    (0, 0, 0).into(),
-                    fractal::to_keycode('.'),
-                );
+
+        if map.revealed_tiles[idx] {
+            match tile {
+                TileType::Floor => {
+                    glyph = fractal::to_keycode('.');
+                    fg = color::AQUA;
+                }
+                TileType::Wall => {
+                    glyph = fractal::to_keycode('#');
+                    fg = color::GREEN;
+                }
             }
-            TileType::Wall => {
-                ctx.set(
-                    x,
-                    y,
-                    (0, 255, 0).into(),
-                    (0, 0, 0).into(),
-                    fractal::to_keycode('#'),
-                );
+            if !map.visible_tiles[idx] {
+                fg = fg.to_grayscale();
+                println!("{:?}", fg.tuple());
             }
+            ctx.set(x, y, fg, color::BLACK, glyph);
         }
 
         // Move the coordinates

@@ -24,6 +24,12 @@ impl Color {
         Color((red as u32) << 16 | (green as u32) << 8 | (blue as u32))
     }
 
+    /// Creates a new Color from RGB floats
+    /// Each float is on a scale from 0..1
+    pub fn from_f32(red: f32, green: f32, blue: f32) -> Self {
+        Color::from_rgb((red * 255.0) as u8, (green * 255.0) as u8, (blue * 255.0) as u8)
+    }
+
     /// Creates an new Color from a RGB tuple.
     const fn from_rgb_tuple(color: (u8, u8, u8)) -> Self {
         Color((color.0 as u32) << 16 | (color.1 as u32) << 8 | (color.2 as u32))
@@ -68,11 +74,23 @@ impl Color {
     pub fn hex(self) -> String {
         format!("{:06X}", self.0)
     }
+
+    /// Returns a grayscale version of the color
+    pub fn to_grayscale(&self) -> Color {
+        let col = (0.3 * self.r_f()) + (0.59 * self.g_f()) + (0.11 * self.b_f());
+        (col, col, col).into()
+    }
 }
 
 impl From<(u8, u8, u8)> for Color {
     fn from((red, green, blue): (u8, u8, u8)) -> Self {
         Color::from_rgb(red, green, blue)
+    }
+}
+
+impl From<(f32, f32, f32)> for Color {
+    fn from((r, g, b): (f32, f32, f32)) -> Self {
+        Color::from_rgb((r * 255.0) as u8, (g * 255.0) as u8, (b * 255.0) as u8)
     }
 }
 
