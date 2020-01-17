@@ -101,4 +101,22 @@ impl Console for SimpleConsole {
             self.is_dirty = false;
         }
     }
+
+    fn get_size(&self) -> (u32, u32) {
+        (self.width, self.height)
+    }
+
+    fn print(&mut self, x: i32, y: i32, output: &str) {
+        self.is_dirty = true;
+        let mut idx = self.at(x, y);
+
+        let bytes = super::string_keycode(output);
+
+        for glyph in bytes {
+            if idx < self.tiles.len() {
+                self.tiles[idx].glyph = glyph;
+                idx += 1;
+            }
+        }
+    }
 }

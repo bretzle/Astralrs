@@ -23,7 +23,7 @@ pub trait Console {
     }
 
     /// Gets the dimensions of the console in characters
-    fn get_char_size(&mut self) -> (u32, u32) {
+    fn get_size(&self) -> (u32, u32) {
         unimplemented!();
     }
 

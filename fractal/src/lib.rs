@@ -321,3 +321,8 @@ pub fn to_keycode(c: char) -> u8 {
         _ => 0,
     }
 }
+
+/// Converts a string to a vector of CP437 keycodes
+pub fn string_keycode<S: AsRef<str>>(input: S) -> Vec<u8> {
+    input.as_ref().chars().map(to_keycode).collect()
+}
