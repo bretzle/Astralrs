@@ -1,3 +1,4 @@
+use regex::Regex;
 use std::error;
 use std::fmt;
 
@@ -46,8 +47,7 @@ impl error::Error for DiceParseError {
 }
 
 #[allow(dead_code)]
-// Parses a dice string, of the type "1d6+3", "3d8-4" or "1d20".
-#[cfg(feature = "parsing")]
+/// Parses a dice string, of the type "1d6+3", "3d8-4" or "1d20".
 pub fn parse_dice_string(dice: &str) -> Result<DiceType, DiceParseError> {
     lazy_static! {
         static ref DICE_RE: Regex = Regex::new(r"(\d+)d(\d+)([\+\-]\d+)?").unwrap();
