@@ -1,8 +1,8 @@
-use fractal::fractal::Fractal;
 use crate::components::*;
 use crate::map::Map;
 use crate::map::TileType;
 use crate::State;
+use fractal::fractal::Fractal;
 use fractal::VirtualKeyCode;
 use specs::prelude::*;
 use std::cmp::{max, min};

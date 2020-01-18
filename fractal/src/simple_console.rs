@@ -9,8 +9,8 @@ use crate::color;
 use crate::color::RGB;
 use crate::console::Console;
 use crate::console::Tile;
-use crate::gui_helpers;
 use crate::geometry::rect::Rect;
+use crate::gui_helpers;
 use crate::rex::XpLayer;
 use std::any::Any;
 
