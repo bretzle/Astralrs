@@ -18,6 +18,7 @@ use fractal::color;
 use fractal::console::Console;
 use fractal::fractal::main_loop;
 use fractal::fractal::Fractal;
+use fractal::random::RandomNumberGenerator;
 use fractal::GameState;
 use specs::prelude::*;
 
@@ -44,9 +45,13 @@ impl GameState for State {
 
         let positions = self.ecs.read_storage::<Position>();
         let renderables = self.ecs.read_storage::<Renderable>();
+        let map = self.ecs.fetch::<Map>();
 
         for (pos, render) in (&positions, &renderables).join() {
-            ctx.set(pos.x, pos.y, render.fg, render.bg, render.glyph);
+            let idx = map.xy_idx(pos.x, pos.y);
+            if map.visible_tiles[idx] {
+                ctx.set(pos.x, pos.y, render.fg, render.bg, render.glyph);
+            }
         }
     }
 }
@@ -62,6 +67,35 @@ fn main() {
 
     let map: Map = Map::new_map_rooms_and_corridors();
     let (player_x, player_y) = map.rooms[0].center();
+
+    let mut rng = RandomNumberGenerator::new();
+    for room in map.rooms.iter().skip(1) {
+        let (x, y) = room.center();
+
+        let glyph: u8;
+        let roll = rng.roll_dice(1, 2);
+
+        match roll {
+            1 => glyph = to_cp437('g'),
+            _ => glyph = to_cp437('c'),
+        }
+
+        gs.ecs
+            .create_entity()
+            .with(Position { x, y })
+            .with(Renderable {
+                glyph: glyph,
+                fg: color::RED,
+                bg: color::BLACK,
+            })
+            .with(Viewshed {
+                visible_tiles: Vec::new(),
+                range: 8,
+                dirty: true,
+            })
+            .build();
+    }
+
     gs.ecs.insert(map);
 
     gs.ecs
