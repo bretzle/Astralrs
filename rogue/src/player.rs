@@ -1,6 +1,7 @@
 use crate::components::*;
 use crate::map::Map;
 use crate::map::TileType;
+use crate::RunState;
 use crate::State;
 use fractal::fractal::Fractal;
 use fractal::VirtualKeyCode;
@@ -24,16 +25,17 @@ pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
     }
 }
 
-pub fn player_input(gs: &mut State, ctx: &mut Fractal) {
+pub fn player_input(gs: &mut State, ctx: &mut Fractal) -> RunState {
     // Player movement
     match ctx.key {
-        None => {} // Nothing happened
+        None => return RunState::Paused, // Nothing happened
         Some(key) => match key {
             VirtualKeyCode::Left => try_move_player(-1, 0, &mut gs.ecs),
             VirtualKeyCode::Right => try_move_player(1, 0, &mut gs.ecs),
             VirtualKeyCode::Up => try_move_player(0, -1, &mut gs.ecs),
             VirtualKeyCode::Down => try_move_player(0, 1, &mut gs.ecs),
-            _ => {}
+            _ => return RunState::Paused,
         },
     }
+    RunState::Running
 }

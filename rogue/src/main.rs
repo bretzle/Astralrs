@@ -5,12 +5,14 @@ extern crate specs_derive;
 
 mod components;
 mod map;
+mod monster_ai_system;
 mod player;
 mod rect;
 mod visibility_system;
 
 use crate::components::*;
 use crate::map::*;
+use crate::monster_ai_system::MonsterAI;
 use crate::player::*;
 use crate::visibility_system::VisibilitySystem;
 use fractal::codepage437::to_cp437;
@@ -22,14 +24,23 @@ use fractal::random::RandomNumberGenerator;
 use fractal::GameState;
 use specs::prelude::*;
 
+#[derive(PartialEq, Copy, Clone)]
+pub enum RunState {
+    Paused,
+    Running,
+}
+
 pub struct State {
     pub ecs: World,
+    pub runstate: RunState,
 }
 
 impl State {
     fn run_systems(&mut self) {
         let mut vis = VisibilitySystem {};
         vis.run_now(&self.ecs);
+        let mut mob = MonsterAI {};
+        mob.run_now(&self.ecs);
         self.ecs.maintain();
     }
 }
@@ -38,8 +49,12 @@ impl GameState for State {
     fn tick(&mut self, ctx: &mut Fractal) {
         ctx.cls();
 
-        player_input(self, ctx);
-        self.run_systems();
+        if self.runstate == RunState::Running {
+            self.run_systems();
+            self.runstate = RunState::Paused;
+        } else {
+            self.runstate = player_input(self, ctx);
+        }
 
         draw_map(&self.ecs, ctx);
 
@@ -58,11 +73,15 @@ impl GameState for State {
 
 fn main() {
     let context = Fractal::init_simple8x8(80, 50, "Hello Rust World", "resources");
-    let mut gs = State { ecs: World::new() };
+    let mut gs = State {
+        ecs: World::new(),
+        runstate: RunState::Running,
+    };
 
     gs.ecs.register::<Position>();
     gs.ecs.register::<Renderable>();
     gs.ecs.register::<Player>();
+    gs.ecs.register::<Monster>();
     gs.ecs.register::<Viewshed>();
 
     let map: Map = Map::new_map_rooms_and_corridors();
@@ -93,6 +112,7 @@ fn main() {
                 range: 8,
                 dirty: true,
             })
+            .with(Monster {})
             .build();
     }
 
