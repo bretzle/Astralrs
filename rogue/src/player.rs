@@ -4,6 +4,7 @@ use crate::map::TileType;
 use crate::RunState;
 use crate::State;
 use fractal::fractal::Fractal;
+use fractal::geometry::Point;
 use fractal::VirtualKeyCode;
 use specs::prelude::*;
 use std::cmp::{max, min};
@@ -21,6 +22,10 @@ pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
             pos.y = min(49, max(0, pos.y + delta_y));
 
             viewshed.dirty = true;
+            // Let the engine know the player entity has moved
+            let mut ppos = ecs.write_resource::<Point>();
+            ppos.x = pos.x;
+            ppos.y = pos.y;
         }
     }
 }
