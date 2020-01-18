@@ -1,9 +1,9 @@
 use crate::components::Player;
 use crate::components::Position;
 use crate::components::Viewshed;
-use crate::geometry::point::Point;
 use crate::map::Map;
-use fractal::field_of_view;
+use fractal::fieldofview::field_of_view;
+use fractal::geometry::point::Point;
 use specs::prelude::*;
 
 pub struct VisibilitySystem {}
@@ -24,10 +24,8 @@ impl<'a> System<'a> for VisibilitySystem {
             if view.dirty {
                 view.dirty = false;
                 view.visible_tiles.clear();
-                view.visible_tiles =
-                    field_of_view(Point::new(pos.x, pos.y), view.range, &*map);
-                view
-                    .visible_tiles
+                view.visible_tiles = field_of_view(Point::new(pos.x, pos.y), view.range, &*map);
+                view.visible_tiles
                     .retain(|p| p.x > 0 && p.x < map.width - 1 && p.y > 0 && p.y < map.height - 1);
 
                 // If this is the player, reveal what they can see

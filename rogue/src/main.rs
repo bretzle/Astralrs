@@ -13,9 +13,12 @@ use crate::components::*;
 use crate::map::*;
 use crate::player::*;
 use crate::visibility_system::VisibilitySystem;
-use fractal::Fractal;
+use fractal::codepage437::to_cp437;
+use fractal::color;
+use fractal::console::Console;
+use fractal::fractal::main_loop;
+use fractal::fractal::Fractal;
 use fractal::GameState;
-use fractal::*;
 use specs::prelude::*;
 
 pub struct State {
@@ -49,7 +52,7 @@ impl GameState for State {
 }
 
 fn main() {
-    let context = Fractal::init_simple(80, 50, "Hello Rust World", "resources");
+    let context = Fractal::init_simple8x8(80, 50, "Hello Rust World", "resources");
     let mut gs = State { ecs: World::new() };
 
     gs.ecs.register::<Position>();
@@ -68,7 +71,7 @@ fn main() {
             y: player_y,
         })
         .with(Renderable {
-            glyph: fractal::to_keycode('@'),
+            glyph: to_cp437('@'),
             fg: color::YELLOW,
             bg: color::BLACK,
         })
@@ -80,5 +83,5 @@ fn main() {
         })
         .build();
 
-    fractal::main_loop(context, gs);
+    main_loop(context, gs);
 }

@@ -1,9 +1,7 @@
-//! This class adds utility funtions relating to field of view
-
 use crate::geometry::circle_bresenham::BresenhamCircle;
 use crate::geometry::line_vector::VectorLine;
 use crate::geometry::point::Point;
-use crate::geometry::Algorithm2D;
+use crate::pathfinding::Algorithm2D;
 use std::collections::HashSet;
 
 /// Calculates field-of-view for a map that supports Algorithm2D, returning a HashSet. This is a bit faster

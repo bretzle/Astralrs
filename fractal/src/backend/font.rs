@@ -1,27 +1,23 @@
 #![allow(unsafe_code)]
 
-//! Font
-
+use crate::backend::FractalPlatform;
 use crate::embedding;
-use crate::Platform;
 use glow::HasContext;
 use image::{ColorType, GenericImageView};
 
-#[derive(Debug, Clone, PartialEq)]
-/// Represents a font
+#[derive(PartialEq, Clone)]
+/// FRACTAL's representation of a font or tileset file.
 pub struct Font {
-    /// name of file
     pub bitmap_file: String,
-    /// width in pixels
     pub width: u32,
-    /// height in pixels
     pub height: u32,
-    /// glsl id
+
     pub gl_id: Option<u32>,
-    /// size a a tile
+
     pub tile_size: (u32, u32),
 }
 
+#[allow(non_snake_case)]
 impl Font {
     /// Creates an unloaded texture with filename and size parameters provided.
     pub fn new<S: ToString>(filename: S, width: u32, height: u32, tile_size: (u32, u32)) -> Font {
@@ -34,19 +30,6 @@ impl Font {
         }
     }
 
-    /// Loads a font file.
-    pub fn load<S: ToString>(filename: S, tile_size: (u32, u32)) -> Self {
-        let img = Font::load_image(&filename.to_string());
-        Font {
-            bitmap_file: filename.to_string(),
-            width: img.width(),
-            height: img.height(),
-            gl_id: None,
-            tile_size,
-        }
-    }
-
-    /// loads an image for further processing.
     fn load_image(filename: &str) -> image::DynamicImage {
         let resource = embedding::EMBED
             .lock()
@@ -59,7 +42,20 @@ impl Font {
         }
     }
 
-    pub fn setup_gl_texture(&mut self, platform: &Platform) -> u32 {
+    /// Loads a font file (texture) to obtain the width and height for you
+    pub fn load<S: ToString>(filename: S, tile_size: (u32, u32)) -> Font {
+        let img = Font::load_image(&filename.to_string());
+        Font {
+            bitmap_file: filename.to_string(),
+            width: img.width(),
+            height: img.height(),
+            gl_id: None,
+            tile_size,
+        }
+    }
+
+    /// Load a font, and allocate it as an OpenGL resource. Returns the OpenGL binding number (which is also set in the structure).
+    pub fn setup_gl_texture(&mut self, platform: &FractalPlatform) -> u32 {
         let gl = &platform.platform.gl;
         let texture;
 
@@ -120,9 +116,9 @@ impl Font {
         texture
     }
 
-    pub fn bind_texture(&self, platform: &Platform) {
+    /// Sets this font file as the active texture
+    pub fn bind_texture(&self, platform: &FractalPlatform) {
         let gl = &platform.platform.gl;
-
         unsafe {
             gl.bind_texture(glow::TEXTURE_2D, self.gl_id);
         }

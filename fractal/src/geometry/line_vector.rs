@@ -1,25 +1,16 @@
-//! todo document me
-
 use crate::geometry::point::Point;
 use core::iter::Iterator;
 use ultraviolet::Vec2;
 
-/// todo document me
 pub struct VectorLine {
-    /// todo document me
     end: Point,
-    /// todo document me
     current_pos: Vec2,
-    /// todo document me
     slope: Vec2,
-    /// todo document me
     finished: bool,
-    /// todo document me
     really_finished: bool,
 }
 
 impl VectorLine {
-    /// todo document me
     pub fn new(start: Point, end: Point) -> Self {
         let current_pos = Vec2::new(start.x as f32 + 0.5, start.y as f32 + 0.5);
         let destination = Vec2::new(end.x as f32 + 0.5, end.y as f32 + 0.5);

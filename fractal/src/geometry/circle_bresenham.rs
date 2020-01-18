@@ -1,10 +1,8 @@
-//! todo document me
-
 use crate::geometry::point::Point;
 
 /// An implementation of [Bresenham's circle algorithm].
 /// [Bresenham's circle algorithm]: http://members.chello.at/~easyfilter/bresenham.html
-/// Derived from the line_drawing crate, but specialized to use RLTK's types.
+/// Derived from the line_drawing crate, but specialized to use FRACTAL's types.
 pub struct BresenhamCircle {
     x: i32,
     y: i32,
@@ -18,7 +16,6 @@ pub struct BresenhamCircle {
 impl BresenhamCircle {
     #[inline]
     #[allow(dead_code)]
-    /// todo document me
     pub fn new(center_x: i32, center_y: i32, radius: i32) -> Self {
         Self {
             center_x,

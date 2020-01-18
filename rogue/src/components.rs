@@ -1,6 +1,6 @@
-use fractal::color::Color;
+use fractal::color::RGB;
+use fractal::geometry::point::Point;
 use specs::prelude::*;
-use crate::geometry::point::Point;
 
 #[derive(Component)]
 pub struct Position {
@@ -11,8 +11,8 @@ pub struct Position {
 #[derive(Component)]
 pub struct Renderable {
     pub glyph: u8,
-    pub fg: Color,
-    pub bg: Color,
+    pub fg: RGB,
+    pub bg: RGB,
 }
 
 #[derive(Component, Debug)]

@@ -1,13 +1,13 @@
 use crate::rect::Rect;
+use fractal::codepage437::to_cp437;
 use fractal::color;
-use fractal::color::Color;
+use fractal::console::Console;
+use fractal::fractal::Fractal;
 use fractal::geometry::point::Point;
-use fractal::geometry::Algorithm2D;
-use fractal::geometry::BaseMap;
 use fractal::geometry::DistanceAlg;
-use fractal::Console;
-use fractal::Fractal;
-use fractal::RandomNumberGenerator;
+use fractal::pathfinding::Algorithm2D;
+use fractal::pathfinding::BaseMap;
+use fractal::random::RandomNumberGenerator;
 use specs::prelude::World;
 use std::cmp::{max, min};
 
@@ -159,17 +159,16 @@ pub fn draw_map(ecs: &World, ctx: &mut Fractal) {
         if map.revealed_tiles[idx] {
             match tile {
                 TileType::Floor => {
-                    glyph = fractal::to_keycode('.');
+                    glyph = to_cp437('.');
                     fg = color::AQUA;
                 }
                 TileType::Wall => {
-                    glyph = fractal::to_keycode('#');
+                    glyph = to_cp437('#');
                     fg = color::GREEN;
                 }
             }
             if !map.visible_tiles[idx] {
-                fg = fg.to_grayscale();
-                println!("{:?}", fg.tuple());
+                fg = fg.to_greyscale();
             }
             ctx.set(x, y, fg, color::BLACK, glyph);
         }

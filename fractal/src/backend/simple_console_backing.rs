@@ -1,14 +1,13 @@
-//! A simple OpenGL backend implementation
+#![allow(unsafe_code)]
 
 use crate::backend::font::Font;
 use crate::backend::shader::Shader;
-use crate::color::Color;
+use crate::backend::FractalPlatform;
+use crate::color::RGB;
 use crate::console::Tile;
-use crate::Platform;
 use glow::HasContext;
 use std::mem;
 
-///
 pub struct SimpleConsoleBackend {
     vertex_buffer: Vec<f32>,
     index_buffer: Vec<i32>,
@@ -20,10 +19,10 @@ pub struct SimpleConsoleBackend {
 }
 
 impl SimpleConsoleBackend {
-    pub fn new(platform: &Platform, width: usize, height: usize) -> Self {
+    pub fn new(platform: &FractalPlatform, width: usize, height: usize) -> SimpleConsoleBackend {
         let vertex_capacity: usize = (11 * width * height) * 4;
         let index_capacity: usize = 6 * width * height;
-        let (vbo, vao, ebo) = SimpleConsoleBackend::init(&platform.platform.gl);
+        let (vbo, vao, ebo) = SimpleConsoleBackend::init_gl_for_console(&platform.platform.gl);
         let mut result = SimpleConsoleBackend {
             vertex_buffer: Vec::with_capacity(vertex_capacity),
             index_buffer: Vec::with_capacity(index_capacity),
@@ -42,7 +41,7 @@ impl SimpleConsoleBackend {
         result
     }
 
-    pub fn init(gl: &glow::Context) -> (u32, u32, u32) {
+    fn init_gl_for_console(gl: &glow::Context) -> (u32, u32, u32) {
         let (texture, vbo, vao, ebo);
 
         unsafe {
@@ -119,36 +118,37 @@ impl SimpleConsoleBackend {
         (vbo, vao, ebo)
     }
 
-    pub fn draw(
+    /// Helper function to add all the elements required by the shader for a given point.
+    #[allow(clippy::too_many_arguments)]
+    fn push_point(
         &mut self,
-        font: &Font,
-        shader: &Shader,
-        platform: &Platform,
-        width: u32,
-        height: u32,
+        x: f32,
+        y: f32,
+        fg: RGB,
+        bg: RGB,
+        ux: f32,
+        uy: f32,
+        offset_x: f32,
+        offset_y: f32,
     ) {
-        let gl = &platform.platform.gl;
-
-        unsafe {
-            font.bind_texture(platform);
-
-            shader.use_program(gl);
-            gl.bind_vertex_array(Some(self.vao));
-            gl.bind_buffer(glow::ELEMENT_ARRAY_BUFFER, Some(self.ebo));
-            gl.bind_buffer(glow::ARRAY_BUFFER, Some(self.vbo));
-            gl.draw_elements(
-                glow::TRIANGLES,
-                (width * height * 6) as i32,
-                glow::UNSIGNED_INT,
-                0,
-            );
-        }
+        self.vertex_buffer[self.vertex_counter] = x + offset_x;
+        self.vertex_buffer[self.vertex_counter + 1] = y + offset_y;
+        self.vertex_buffer[self.vertex_counter + 2] = 0.0f32;
+        self.vertex_buffer[self.vertex_counter + 3] = fg.rf();
+        self.vertex_buffer[self.vertex_counter + 4] = fg.gf();
+        self.vertex_buffer[self.vertex_counter + 5] = fg.bf();
+        self.vertex_buffer[self.vertex_counter + 6] = bg.rf();
+        self.vertex_buffer[self.vertex_counter + 7] = bg.gf();
+        self.vertex_buffer[self.vertex_counter + 8] = bg.bf();
+        self.vertex_buffer[self.vertex_counter + 9] = ux;
+        self.vertex_buffer[self.vertex_counter + 10] = uy;
+        self.vertex_counter += 11;
     }
 
     /// Rebuilds the OpenGL backing buffer.
     pub fn rebuild_vertices(
         &mut self,
-        platform: &Platform,
+        platform: &FractalPlatform,
         height: u32,
         width: u32,
         tiles: &[Tile],
@@ -252,29 +252,30 @@ impl SimpleConsoleBackend {
         }
     }
 
-    /// Helper function to add all the elements required by the shader for a given point.
-    fn push_point(
+    pub fn gl_draw(
         &mut self,
-        x: f32,
-        y: f32,
-        fg: Color,
-        bg: Color,
-        ux: f32,
-        uy: f32,
-        offset_x: f32,
-        offset_y: f32,
+        font: &Font,
+        shader: &Shader,
+        platform: &FractalPlatform,
+        width: u32,
+        height: u32,
     ) {
-        self.vertex_buffer[self.vertex_counter] = x + offset_x;
-        self.vertex_buffer[self.vertex_counter + 1] = y + offset_y;
-        self.vertex_buffer[self.vertex_counter + 2] = 0.0f32;
-        self.vertex_buffer[self.vertex_counter + 3] = fg.r_f();
-        self.vertex_buffer[self.vertex_counter + 4] = fg.g_f();
-        self.vertex_buffer[self.vertex_counter + 5] = fg.b_f();
-        self.vertex_buffer[self.vertex_counter + 6] = bg.r_f();
-        self.vertex_buffer[self.vertex_counter + 7] = bg.g_f();
-        self.vertex_buffer[self.vertex_counter + 8] = bg.b_f();
-        self.vertex_buffer[self.vertex_counter + 9] = ux;
-        self.vertex_buffer[self.vertex_counter + 10] = uy;
-        self.vertex_counter += 11;
+        let gl = &platform.platform.gl;
+        unsafe {
+            // bind Texture
+            font.bind_texture(platform);
+
+            // render container
+            shader.useProgram(gl);
+            gl.bind_vertex_array(Some(self.vao));
+            gl.bind_buffer(glow::ELEMENT_ARRAY_BUFFER, Some(self.ebo));
+            gl.bind_buffer(glow::ARRAY_BUFFER, Some(self.vbo));
+            gl.draw_elements(
+                glow::TRIANGLES,
+                (width * height * 6) as i32,
+                glow::UNSIGNED_INT,
+                0,
+            );
+        }
     }
 }

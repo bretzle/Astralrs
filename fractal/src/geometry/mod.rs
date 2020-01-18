@@ -1,45 +1,21 @@
-//! Module for geometry
-
-pub mod circle_bresenham;
-pub mod line_vector;
-pub mod point;
-
-use point::Point;
+use crate::geometry::point::Point;
+use crate::geometry::point3::Point3;
 use std::cmp::{max, min};
 
-/// Implement this trait to support path-finding functions.
-pub trait BaseMap {
-    /// True is you can see through the tile, false otherwise.
-    fn is_opaque(&self, idx: i32) -> bool;
-
-    /// Return a vector of tile indices to which one can path from the idx.
-    /// These do NOT have to be contiguous - if you want to support teleport pads, that's awesome.
-    fn get_available_exits(&self, idx: i32) -> Vec<(i32, f32)>;
-
-    /// Return the distance you would like to use for path-finding. Generally, Pythagoras distance (implemented in geometry)
-    /// is fine, but you might use Manhattan or any other heuristic that fits your problem.
-    fn get_pathing_distance(&self, idx1: i32, idx2: i32) -> f32;
-}
-
-/// Implement these for handling conversion to/from 2D coordinates (they are separate, because you might
-/// want Dwarf Fortress style 3D!)
-pub trait Algorithm2D: BaseMap {
-    /// Convert a Point (x/y) to an array index.
-    fn point2d_to_index(&self, pt: Point) -> i32;
-
-    /// Convert an array index to a point.
-    fn index_to_point2d(&self, idx: i32) -> Point;
-
-    /// Optional - check that an x/y coordinate is within the map bounds
-    fn in_bounds(&self, _pos: Point) -> bool {
-        true
-    }
-}
+pub mod circle_bresenham;
+pub mod line_bresenham;
+pub mod line_vector;
+pub mod lines;
+pub mod point;
+pub mod point3;
+pub mod rect;
 
 /// Enumeration of available 2D Distance algorithms
 pub enum DistanceAlg {
-    /// todo Document me
     Pythagoras,
+    PythagorasSquared,
+    Manhattan,
+    Chebyshev,
 }
 
 impl DistanceAlg {
@@ -47,8 +23,68 @@ impl DistanceAlg {
     pub fn distance2d(self, start: Point, end: Point) -> f32 {
         match self {
             DistanceAlg::Pythagoras => distance2d_pythagoras(start, end),
+            DistanceAlg::PythagorasSquared => distance2d_pythagoras_squared(start, end),
+            DistanceAlg::Manhattan => distance2d_manhattan(start, end),
+            DistanceAlg::Chebyshev => distance2d_chebyshev(start, end),
         }
     }
+    /// Provides a 3D distance between points, using the specified algorithm.
+    pub fn distance3d(self, start: Point3, end: Point3) -> f32 {
+        match self {
+            DistanceAlg::Pythagoras => distance3d_pythagoras(start, end),
+            DistanceAlg::PythagorasSquared => distance3d_pythagoras_squared(start, end),
+            DistanceAlg::Manhattan => distance3d_manhattan(start, end),
+            DistanceAlg::Chebyshev => distance3d_pythagoras(start, end),
+        }
+    }
+}
+
+/// Enumeration of available 2D Distance algorithms
+pub enum LineAlg {
+    Bresenham,
+    Vector,
+}
+
+/// Calculates a Pythagoras distance between two points, and skips the square root for speed.
+fn distance2d_pythagoras_squared(start: Point, end: Point) -> f32 {
+    let dx = (max(start.x, end.x) - min(start.x, end.x)) as f32;
+    let dy = (max(start.y, end.y) - min(start.y, end.y)) as f32;
+    (dx * dx) + (dy * dy)
+}
+
+/// Calculates a Manhattan distance between two points
+fn distance2d_manhattan(start: Point, end: Point) -> f32 {
+    let dx = (max(start.x, end.x) - min(start.x, end.x)) as f32;
+    let dy = (max(start.y, end.y) - min(start.y, end.y)) as f32;
+    dx + dy
+}
+
+/// Calculates a Manhattan distance between two 3D points
+fn distance3d_manhattan(start: Point3, end: Point3) -> f32 {
+    let dx = (max(start.x, end.x) - min(start.x, end.x)) as f32;
+    let dy = (max(start.y, end.y) - min(start.y, end.y)) as f32;
+    let dz = (max(start.z, end.z) - min(start.z, end.z)) as f32;
+    dx + dy + dz
+}
+
+/// Calculates a Chebyshev distance between two points
+/// See: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
+fn distance2d_chebyshev(start: Point, end: Point) -> f32 {
+    let dx = (max(start.x, end.x) - min(start.x, end.x)) as f32;
+    let dy = (max(start.y, end.y) - min(start.y, end.y)) as f32;
+    if dx > dy {
+        (dx - dy) + 1.0 * dy
+    } else {
+        (dy - dx) + 1.0 * dx
+    }
+}
+
+/// Calculates a Pythagoras distance between two 3D points.
+fn distance3d_pythagoras_squared(start: Point3, end: Point3) -> f32 {
+    let dx = (max(start.x, end.x) - min(start.x, end.x)) as f32;
+    let dy = (max(start.y, end.y) - min(start.y, end.y)) as f32;
+    let dz = (max(start.z, end.z) - min(start.z, end.z)) as f32;
+    (dx * dx) + (dy * dy) + (dz * dz)
 }
 
 /// Calculates a Pythagoras distance between two points.
@@ -57,9 +93,18 @@ fn distance2d_pythagoras(start: Point, end: Point) -> f32 {
     f32::sqrt(dsq)
 }
 
-/// Calculates a Pythagoras distance between two points, and skips the square root for speed.
-fn distance2d_pythagoras_squared(start: Point, end: Point) -> f32 {
-    let dx = (max(start.x, end.x) - min(start.x, end.x)) as f32;
-    let dy = (max(start.y, end.y) - min(start.y, end.y)) as f32;
-    (dx * dx) + (dy * dy)
+/// Calculates a Pythagoras distance between two 3D points.
+fn distance3d_pythagoras(start: Point3, end: Point3) -> f32 {
+    let dsq = distance3d_pythagoras_squared(start, end);
+    f32::sqrt(dsq)
+}
+
+/// From a given start point, project forward radius units at an angle of angle_radians degrees.
+/// 0 Degrees is north (negative Y), 90 degrees is east (positive X)
+pub fn project_angle(start: Point, radius: f32, angle_radians: f32) -> Point {
+    let degrees_radians = angle_radians + std::f32::consts::PI;
+    Point::new(
+        (0.0 - (start.x as f32 + radius * f32::sin(degrees_radians))) as i32,
+        (start.y as f32 + radius * f32::cos(degrees_radians)) as i32,
+    )
 }
