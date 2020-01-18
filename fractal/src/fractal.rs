@@ -5,7 +5,7 @@ use crate::backend::shader::Shader;
 use crate::backend::FractalPlatform;
 use crate::color::RGB;
 use crate::console::Console;
-use crate::geometry::rect::Rect;
+use crate::geometry::Rect;
 use crate::rex::XpFile;
 use crate::rex::XpLayer;
 use crate::simple_console::SimpleConsole;

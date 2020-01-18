@@ -1,5 +1,5 @@
 use fractal::color::RGB;
-use fractal::geometry::point::Point;
+use fractal::geometry::Point;
 use specs::prelude::*;
 
 #[derive(Component)]

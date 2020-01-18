@@ -1,6 +1,6 @@
-use crate::geometry::circle_bresenham::BresenhamCircle;
-use crate::geometry::line_vector::VectorLine;
-use crate::geometry::point::Point;
+use crate::geometry::BresenhamCircle;
+use crate::geometry::Point;
+use crate::geometry::VectorLine;
 use crate::pathfinding::Algorithm2D;
 use std::collections::HashSet;
 

@@ -1,8 +1,8 @@
 pub mod astar;
 pub mod dijkstra;
 
-use crate::geometry::point::Point;
-use crate::geometry::point3::Point3;
+use crate::geometry::Point;
+use crate::geometry::Point3;
 
 /// Implement this trait to support path-finding functions.
 pub trait BaseMap {

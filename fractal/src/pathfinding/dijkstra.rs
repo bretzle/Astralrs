@@ -1,7 +1,7 @@
 #![allow(unsafe_code)]
 
 use crate::pathfinding::BaseMap;
-use rayon::iter::{IndexedParallelIterator, IntoParallelRefMutIterator, ParallelIterator};
+use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
 use rayon::slice::ParallelSliceMut;
 use std::f32::MAX;
 use std::mem;

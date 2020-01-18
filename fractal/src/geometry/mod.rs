@@ -1,14 +1,20 @@
-use crate::geometry::point::Point;
-use crate::geometry::point3::Point3;
 use std::cmp::{max, min};
 
-pub mod circle_bresenham;
-pub mod line_bresenham;
-pub mod line_vector;
-pub mod lines;
-pub mod point;
-pub mod point3;
-pub mod rect;
+mod circle_bresenham;
+mod line_bresenham;
+mod line_vector;
+mod lines;
+mod point;
+mod point3;
+mod rect;
+
+pub use circle_bresenham::BresenhamCircle;
+pub use line_bresenham::Bresenham;
+pub use line_vector::VectorLine;
+pub use lines::*;
+pub use point::Point;
+pub use point3::Point3;
+pub use rect::Rect;
 
 /// Enumeration of available 2D Distance algorithms
 pub enum DistanceAlg {

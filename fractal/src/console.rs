@@ -2,7 +2,7 @@ use crate::backend::font::Font;
 use crate::backend::shader::Shader;
 use crate::backend::FractalPlatform;
 use crate::color::RGB;
-use crate::geometry::rect::Rect;
+use crate::geometry::Rect;
 use crate::rex::XpLayer;
 use std::any::Any;
 

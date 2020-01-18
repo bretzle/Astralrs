@@ -3,7 +3,7 @@ use crate::components::Position;
 use crate::components::Viewshed;
 use crate::map::Map;
 use fractal::fieldofview::field_of_view;
-use fractal::geometry::point::Point;
+use fractal::geometry::Point;
 use specs::prelude::*;
 
 pub struct VisibilitySystem {}
