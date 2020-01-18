@@ -63,7 +63,7 @@ impl Fractal {
     ) -> Fractal {
         let font_path = format!("{}/terminal8x8.png", &path_to_shaders.to_string());
         let mut context = Fractal::init_raw(width_chars * 8, height_chars * 8, window_title);
-        let font = context.register_font(Font::load(&font_path.to_string(), (8, 8)));
+        let font = context.register_font(Font::load(&font_path, (8, 8)));
         context.register_console(
             SimpleConsole::init(width_chars, height_chars, &context.backend),
             font,
@@ -80,7 +80,7 @@ impl Fractal {
     ) -> Fractal {
         let font_path = format!("{}/vga8x16.png", &path_to_shaders.to_string());
         let mut context = Fractal::init_raw(width_chars * 8, height_chars * 16, window_title);
-        let font = context.register_font(Font::load(&font_path.to_string(), (8, 16)));
+        let font = context.register_font(Font::load(&font_path, (8, 16)));
         context.register_console(
             SimpleConsole::init(width_chars, height_chars, &context.backend),
             font,

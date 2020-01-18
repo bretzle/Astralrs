@@ -92,11 +92,11 @@ impl Bresenham {
         Bresenham {
             x: start.x,
             y: start.y,
-            dx: dx,
-            dy: dy,
+            dx,
+            dy,
             x1: end.x,
             diff: dy - dx,
-            octant: octant,
+            octant,
         }
     }
 }

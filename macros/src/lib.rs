@@ -56,14 +56,14 @@ pub fn derive(input: TokenStream) -> TokenStream {
         };
 
         match get_each_method(f) {
-            None => set_method.into(),
+            None => set_method,
             Some((true, each_method)) => each_method,
             Some((false, each_method)) => {
                 let methods = quote! {
                     #set_method
                     #each_method
                 };
-                methods.into()
+                methods
             }
         }
     });
