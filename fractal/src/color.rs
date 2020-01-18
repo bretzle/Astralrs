@@ -62,6 +62,11 @@ impl RGB {
 
 pub const WHITE: RGB = RGB::from_u8(255, 255, 255);
 pub const BLACK: RGB = RGB::from_u8(0, 0, 0);
+
+pub const RED: RGB = RGB::from_u8(255, 0, 0);
 pub const GREEN: RGB = RGB::from_u8(0, 255, 0);
+pub const BLUE: RGB = RGB::from_u8(0, 0, 255);
+
 pub const AQUA: RGB = RGB::from_u8(0, 255, 255);
 pub const YELLOW: RGB = RGB::from_u8(255, 255, 0);
+pub const PURPLE: RGB = RGB::from_u8(255, 0, 255);
