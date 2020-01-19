@@ -61,6 +61,7 @@ impl RGB {
 }
 
 pub const WHITE: RGB = RGB::from_u8(255, 255, 255);
+pub const GRAY: RGB = RGB::from_u8(128, 128, 128);
 pub const BLACK: RGB = RGB::from_u8(0, 0, 0);
 
 pub const RED: RGB = RGB::from_u8(255, 0, 0);
