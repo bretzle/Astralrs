@@ -3,6 +3,7 @@ use crate::map::MAPWIDTH;
 use crate::rect::Rect;
 use fractal::codepage437::to_cp437;
 use fractal::color;
+use fractal::log;
 use fractal::random::RandomNumberGenerator;
 use specs::prelude::*;
 
@@ -19,6 +20,7 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
             glyph: to_cp437('@'),
             fg: color::YELLOW,
             bg: color::BLACK,
+            render_order: 0,
         })
         .with(Player {})
         .with(Viewshed {
@@ -65,6 +67,7 @@ fn monster<S: ToString>(ecs: &mut World, x: i32, y: i32, glyph: u8, name: S) {
             glyph,
             fg: color::RED,
             bg: color::BLACK,
+            render_order: 1,
         })
         .with(Viewshed {
             visible_tiles: Vec::new(),
@@ -87,13 +90,18 @@ fn monster<S: ToString>(ecs: &mut World, x: i32, y: i32, glyph: u8, name: S) {
 
 pub fn spawn_room(ecs: &mut World, room: &Rect) {
     let mut monster_spawn_points: Vec<usize> = Vec::new();
+    let mut item_spawn_points: Vec<usize> = Vec::new();
 
     // Scope to keep the borrow checker happy
     {
         let mut rng = ecs.write_resource::<RandomNumberGenerator>();
-        let num_monsters = rng.roll_dice(1, MAX_MONSTERS + 2) - 3;
+        let num_monsters = rng.range(0, MAX_MONSTERS + 1);
+        let num_items = rng.range(0, MAX_ITEMS + 1);
 
-        for _i in 0..num_monsters {
+        log(format!("Monsters: {}", num_monsters));
+        log(format!("Items: {}", num_items));
+
+        for _ in 0..num_monsters {
             let mut added = false;
             while !added {
                 let x = (room.x1 + rng.roll_dice(1, i32::abs(room.x2 - room.x1))) as usize;
@@ -101,6 +109,19 @@ pub fn spawn_room(ecs: &mut World, room: &Rect) {
                 let idx = (y * MAPWIDTH) + x;
                 if !monster_spawn_points.contains(&idx) {
                     monster_spawn_points.push(idx);
+                    added = true;
+                }
+            }
+        }
+
+        for _ in 0..num_items {
+            let mut added = false;
+            while !added {
+                let x = (room.x1 + rng.roll_dice(1, i32::abs(room.x2 - room.x1))) as usize;
+                let y = (room.y1 + rng.roll_dice(1, i32::abs(room.y2 - room.y1))) as usize;
+                let idx = (y * MAPWIDTH) + x;
+                if !item_spawn_points.contains(&idx) {
+                    item_spawn_points.push(idx);
                     added = true;
                 }
             }
@@ -113,4 +134,28 @@ pub fn spawn_room(ecs: &mut World, room: &Rect) {
         let y = *idx / MAPWIDTH;
         random_monster(ecs, x as i32, y as i32);
     }
+
+    // Actually spawn the potions
+    for idx in item_spawn_points.iter() {
+        let x = *idx % MAPWIDTH;
+        let y = *idx / MAPWIDTH;
+        health_potion(ecs, x as i32, y as i32);
+    }
+}
+
+fn health_potion(ecs: &mut World, x: i32, y: i32) {
+    ecs.create_entity()
+        .with(Position { x, y })
+        .with(Renderable {
+            glyph: to_cp437('¡'),
+            fg: color::PURPLE,
+            bg: color::BLACK,
+            render_order: 2,
+        })
+        .with(Name {
+            name: "Health Potion".to_string(),
+        })
+        .with(Item {})
+        .with(Potion { heal_amount: 8 })
+        .build();
 }
