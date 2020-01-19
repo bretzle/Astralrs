@@ -7,6 +7,7 @@ use fractal::color;
 use fractal::console::Console;
 use fractal::fractal::letter_to_option;
 use fractal::fractal::Fractal;
+use fractal::geometry::DistanceAlg::Pythagoras;
 use fractal::geometry::Point;
 use fractal::VirtualKeyCode;
 use specs::prelude::*;
@@ -31,7 +32,6 @@ pub fn draw_ui(ecs: &World, ctx: &mut Fractal) {
     }
 
     let log = ecs.fetch::<GameLog>();
-
     let mut y = 44;
     for s in log.entries.iter() {
         if y < 49 {
@@ -40,9 +40,9 @@ pub fn draw_ui(ecs: &World, ctx: &mut Fractal) {
         y += 1;
     }
 
+    // Draw mouse cursor
     let mouse_pos = ctx.mouse_pos();
-    ctx.set_bg(mouse_pos.0, mouse_pos.1, color::PURPLE);
-
+    ctx.set_bg(mouse_pos.0, mouse_pos.1, color::MAGENTA);
     draw_tooltips(ecs, ctx);
 }
 
@@ -208,13 +208,7 @@ pub fn drop_item_menu(gs: &mut State, ctx: &mut Fractal) -> (ItemMenuResult, Opt
         color::WHITE,
         color::BLACK,
     );
-    ctx.print_color(
-        18,
-        y - 2,
-        color::YELLOW,
-        color::BLACK,
-        "Drop Which Item?",
-    );
+    ctx.print_color(18, y - 2, color::YELLOW, color::BLACK, "Drop Which Item?");
     ctx.print_color(
         18,
         y + count as i32 + 1,
@@ -229,27 +223,9 @@ pub fn drop_item_menu(gs: &mut State, ctx: &mut Fractal) -> (ItemMenuResult, Opt
         .join()
         .filter(|item| item.1.owner == *player_entity)
     {
-        ctx.set(
-            17,
-            y,
-            color::WHITE,
-            color::BLACK,
-            to_cp437('('),
-        );
-        ctx.set(
-            18,
-            y,
-            color::YELLOW,
-            color::BLACK,
-            97 + j as u8,
-        );
-        ctx.set(
-            19,
-            y,
-            color::WHITE,
-            color::BLACK,
-            to_cp437(')'),
-        );
+        ctx.set(17, y, color::WHITE, color::BLACK, to_cp437('('));
+        ctx.set(18, y, color::YELLOW, color::BLACK, 97 + j as u8);
+        ctx.set(19, y, color::WHITE, color::BLACK, to_cp437(')'));
 
         ctx.print(21, y, &name.name.to_string());
         equippable.push(entity);
@@ -273,4 +249,57 @@ pub fn drop_item_menu(gs: &mut State, ctx: &mut Fractal) -> (ItemMenuResult, Opt
             }
         },
     }
+}
+
+pub fn ranged_target(
+    gs: &mut State,
+    ctx: &mut Fractal,
+    range: i32,
+) -> (ItemMenuResult, Option<Point>) {
+    let player_entity = gs.ecs.fetch::<Entity>();
+    let player_pos = gs.ecs.fetch::<Point>();
+    let viewsheds = gs.ecs.read_storage::<Viewshed>();
+
+    ctx.print_color(5, 0, color::YELLOW, color::BLACK, "Select Target:");
+
+    // Highlight available target cells
+    let mut available_cells = Vec::new();
+    let visible = viewsheds.get(*player_entity);
+    if let Some(visible) = visible {
+        // We have a viewshed
+        for idx in visible.visible_tiles.iter() {
+            let distance = Pythagoras.distance2d(*player_pos, *idx);
+            if distance <= range as f32 {
+                ctx.set_bg(idx.x, idx.y, color::BLUE);
+                available_cells.push(idx);
+            }
+        }
+    } else {
+        return (ItemMenuResult::Cancel, None);
+    }
+
+    // Draw mouse cursor
+    let mouse_pos = ctx.mouse_pos();
+    let mut valid_target = false;
+    for idx in available_cells.iter() {
+        if idx.x == mouse_pos.0 && idx.y == mouse_pos.1 {
+            valid_target = true;
+        }
+    }
+    if valid_target {
+        ctx.set_bg(mouse_pos.0, mouse_pos.1, color::CYAN);
+        if ctx.left_click {
+            return (
+                ItemMenuResult::Selected,
+                Some(Point::new(mouse_pos.0, mouse_pos.1)),
+            );
+        }
+    } else {
+        ctx.set_bg(mouse_pos.0, mouse_pos.1, color::RED);
+        if ctx.left_click {
+            return (ItemMenuResult::Cancel, None);
+        }
+    }
+
+    (ItemMenuResult::NoResponse, None)
 }

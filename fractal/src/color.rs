@@ -70,4 +70,9 @@ pub const BLUE: RGB = RGB::from_u8(0, 0, 255);
 
 pub const AQUA: RGB = RGB::from_u8(0, 255, 255);
 pub const YELLOW: RGB = RGB::from_u8(255, 255, 0);
-pub const PURPLE: RGB = RGB::from_u8(255, 0, 255);
+pub const PURPLE: RGB = RGB::from_u8(128, 0, 128);
+
+pub const ORANGE: RGB = RGB::from_u8(255, 165, 0);
+pub const MAGENTA: RGB = RGB::from_u8(255, 0, 255);
+pub const CYAN: RGB = AQUA;
+pub const PINK: RGB = RGB::from_u8(255, 192, 203);
