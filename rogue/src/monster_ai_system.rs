@@ -1,5 +1,6 @@
 use crate::components::*;
 use crate::map::Map;
+use fractal::geometry::DistanceAlg::Pythagoras;
 use fractal::geometry::Point;
 use fractal::log;
 use fractal::pathfinding::astar::a_star_search;
@@ -24,17 +25,20 @@ impl<'a> System<'a> for MonsterAI {
             (&mut viewshed, &monster, &name, &mut position).join()
         {
             if viewshed.visible_tiles.contains(&*player_pos) {
-                log(&format!("{} shouts insults", name.name));
-
                 let path = a_star_search(
                     map.xy_idx(pos.x, pos.y) as i32,
                     map.xy_idx(player_pos.x, player_pos.y) as i32,
                     &mut *map,
                 );
-                if path.success && path.steps.len() > 1 {
+                let distance = Pythagoras.distance2d(Point::new(pos.x, pos.y), *player_pos);
+                if path.success && path.steps.len() > 1 && distance > 1.5 {
                     pos.x = path.steps[1] % map.width;
                     pos.y = path.steps[1] / map.width;
                     viewshed.dirty = true;
+                }
+                if distance < 1.5 {
+                    log(&format!("{} shouts insults", name.name));
+                    return;
                 }
             }
         }
