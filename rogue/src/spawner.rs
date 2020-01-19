@@ -3,9 +3,9 @@ use crate::map::MAPWIDTH;
 use crate::rect::Rect;
 use fractal::codepage437::to_cp437;
 use fractal::color;
-use fractal::log;
 use fractal::random::RandomNumberGenerator;
 use specs::prelude::*;
+use specs::saveload::*;
 
 /// Spawns the player and returns his/her entity object.
 pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
@@ -15,9 +15,9 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
             y: player_y,
         })
         .with(Renderable {
-            glyph: rltk::to_cp437('@'),
-            fg: RGB::named(rltk::YELLOW),
-            bg: RGB::named(rltk::BLACK),
+            glyph: to_cp437('@'),
+            fg: color::YELLOW,
+            bg: color::BLACK,
             render_order: 0,
         })
         .with(Player {})
@@ -122,10 +122,10 @@ fn random_item(ecs: &mut World, x: i32, y: i32) {
 }
 
 fn orc(ecs: &mut World, x: i32, y: i32) {
-    monster(ecs, x, y, rltk::to_cp437('o'), "Orc");
+    monster(ecs, x, y, to_cp437('o'), "Orc");
 }
 fn goblin(ecs: &mut World, x: i32, y: i32) {
-    monster(ecs, x, y, rltk::to_cp437('g'), "Goblin");
+    monster(ecs, x, y, to_cp437('g'), "Goblin");
 }
 
 fn monster<S: ToString>(ecs: &mut World, x: i32, y: i32, glyph: u8, name: S) {
@@ -133,8 +133,8 @@ fn monster<S: ToString>(ecs: &mut World, x: i32, y: i32, glyph: u8, name: S) {
         .with(Position { x, y })
         .with(Renderable {
             glyph,
-            fg: RGB::named(rltk::RED),
-            bg: RGB::named(rltk::BLACK),
+            fg: color::RED,
+            bg: color::BLACK,
             render_order: 1,
         })
         .with(Viewshed {
@@ -161,9 +161,9 @@ fn health_potion(ecs: &mut World, x: i32, y: i32) {
     ecs.create_entity()
         .with(Position { x, y })
         .with(Renderable {
-            glyph: rltk::to_cp437('¡'),
-            fg: RGB::named(rltk::MAGENTA),
-            bg: RGB::named(rltk::BLACK),
+            glyph: to_cp437('¡'),
+            fg: color::MAGENTA,
+            bg: color::BLACK,
             render_order: 2,
         })
         .with(Name {
@@ -180,9 +180,9 @@ fn magic_missile_scroll(ecs: &mut World, x: i32, y: i32) {
     ecs.create_entity()
         .with(Position { x, y })
         .with(Renderable {
-            glyph: rltk::to_cp437(')'),
-            fg: RGB::named(rltk::CYAN),
-            bg: RGB::named(rltk::BLACK),
+            glyph: to_cp437(')'),
+            fg: color::CYAN,
+            bg: color::BLACK,
             render_order: 2,
         })
         .with(Name {
@@ -200,9 +200,9 @@ fn fireball_scroll(ecs: &mut World, x: i32, y: i32) {
     ecs.create_entity()
         .with(Position { x, y })
         .with(Renderable {
-            glyph: rltk::to_cp437(')'),
-            fg: RGB::named(rltk::ORANGE),
-            bg: RGB::named(rltk::BLACK),
+            glyph: to_cp437(')'),
+            fg: color::ORANGE,
+            bg: color::BLACK,
             render_order: 2,
         })
         .with(Name {
@@ -221,9 +221,9 @@ fn confusion_scroll(ecs: &mut World, x: i32, y: i32) {
     ecs.create_entity()
         .with(Position { x, y })
         .with(Renderable {
-            glyph: rltk::to_cp437(')'),
-            fg: RGB::named(rltk::PINK),
-            bg: RGB::named(rltk::BLACK),
+            glyph: to_cp437(')'),
+            fg: color::PINK,
+            bg: color::BLACK,
             render_order: 2,
         })
         .with(Name {

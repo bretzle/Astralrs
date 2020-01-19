@@ -3,7 +3,7 @@ use fractal::codepage437::to_cp437;
 use fractal::color::RGB;
 use fractal::console::Console;
 use fractal::fractal::Fractal;
-use fractal::geometry::DistanceAlg;
+use fractal::geometry::DistanceAlg::Pythagoras;
 use fractal::geometry::Point;
 use fractal::pathfinding::Algorithm2D;
 use fractal::pathfinding::BaseMap;
@@ -187,7 +187,7 @@ impl BaseMap for Map {
     fn get_pathing_distance(&self, idx1: i32, idx2: i32) -> f32 {
         let p1 = Point::new(idx1 % self.width, idx1 / self.width);
         let p2 = Point::new(idx2 % self.width, idx2 / self.width);
-        rltk::DistanceAlg::Pythagoras.distance2d(p1, p2)
+        Pythagoras.distance2d(p1, p2)
     }
 }
 
@@ -208,7 +208,7 @@ impl Algorithm2D for Map {
     }
 }
 
-pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
+pub fn draw_map(ecs: &World, ctx: &mut Fractal) {
     let map = ecs.fetch::<Map>();
 
     let mut y = 0;
@@ -221,11 +221,11 @@ pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
             let mut fg;
             match tile {
                 TileType::Floor => {
-                    glyph = rltk::to_cp437('.');
+                    glyph = to_cp437('.');
                     fg = RGB::from_f32(0.0, 0.5, 0.5);
                 }
                 TileType::Wall => {
-                    glyph = rltk::to_cp437('#');
+                    glyph = to_cp437('#');
                     fg = RGB::from_f32(0., 1.0, 0.);
                 }
             }

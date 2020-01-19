@@ -56,8 +56,7 @@ impl<'a> System<'a> for MonsterAI {
             }
 
             if can_act {
-                let distance =
-                    rltk::DistanceAlg::Pythagoras.distance2d(Point::new(pos.x, pos.y), *player_pos);
+                let distance = Pythagoras.distance2d(Point::new(pos.x, pos.y), *player_pos);
                 if distance < 1.5 {
                     wants_to_melee
                         .insert(
@@ -69,7 +68,7 @@ impl<'a> System<'a> for MonsterAI {
                         .expect("Unable to insert attack");
                 } else if viewshed.visible_tiles.contains(&*player_pos) {
                     // Path to the player
-                    let path = rltk::a_star_search(
+                    let path = a_star_search(
                         map.xy_idx(pos.x, pos.y) as i32,
                         map.xy_idx(player_pos.x, player_pos.y) as i32,
                         &mut *map,

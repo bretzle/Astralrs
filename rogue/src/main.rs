@@ -13,7 +13,6 @@ mod inventory_system;
 mod map;
 mod map_index_system;
 mod melee_compat_system;
-mod menu;
 mod monster_ai_system;
 mod player;
 mod rect;

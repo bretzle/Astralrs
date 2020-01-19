@@ -1,3 +1,12 @@
+use crate::components::*;
+use fractal::geometry::Point;
+use specs::error::NoError;
+use specs::prelude::*;
+use specs::saveload::*;
+use std::fs;
+use std::fs::File;
+use std::path::Path;
+
 macro_rules! serialize_individually {
     ($ecs:expr, $ser:expr, $data:expr, $( $type:ty),*) => {
         $(
@@ -150,8 +159,8 @@ pub fn load_game(ecs: &mut World) {
             deleteme = Some(e);
         }
         for (e, _p, pos) in (&entities, &player, &position).join() {
-            let mut ppos = ecs.write_resource::<rltk::Point>();
-            *ppos = rltk::Point::new(pos.x, pos.y);
+            let mut ppos = ecs.write_resource::<Point>();
+            *ppos = Point::new(pos.x, pos.y);
             let mut player_resource = ecs.write_resource::<Entity>();
             *player_resource = e;
         }
