@@ -1,14 +1,22 @@
 [package]
-name = "rogue"
-version = "0.1.0"
-authors = ["johnf <johnfish218@gmail.com>"]
-edition = "2018"
-workspace = ".."
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+name = 'rogue'
+version = '0.1.0'
+authors = ['johnf <johnfish218@gmail.com>']
+edition = '2018'
+workspace = '..'
 
 [dependencies]
-macros = { path = "../macros" }
-fractal = { path = "../fractal" }
-specs = "0.15.1"
-specs-derive = "0.4.0"
+specs-derive = '0.4.0'
+serde_json = '1.0.39'
+serde = '1.0.104'
+serde_derive = '1.0.104'
+
+[dependencies.specs]
+version = '0.15.1'
+features = ['serde']
+
+[dependencies.macros]
+path = '../macros'
+
+[dependencies.fractal]
+path = '../fractal'

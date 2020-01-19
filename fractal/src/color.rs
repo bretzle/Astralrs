@@ -1,6 +1,6 @@
 use crate::rex::XpColor;
 
-#[derive(PartialEq, Copy, Clone, Default, Debug)]
+#[derive(PartialEq, Copy, Clone, Default, Debug, Serialize, Deserialize)]
 /// Represents an R/G/B triplet
 pub struct RGB {
     pub r: u8,

@@ -42,7 +42,7 @@ pub fn delete_the_dead(ecs: &mut World) {
                         }
                         dead.push(entity)
                     }
-                    Some(_) => fractal::log("You are dead"),
+                    Some(_) => println!("You are dead"),
                 }
             }
         }

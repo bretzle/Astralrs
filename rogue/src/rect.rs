@@ -1,3 +1,4 @@
+#[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
 pub struct Rect {
     pub x1: i32,
     pub x2: i32,
@@ -15,6 +16,7 @@ impl Rect {
         }
     }
 
+    // Returns true if this overlaps with other
     pub fn intersect(&self, other: &Rect) -> bool {
         self.x1 <= other.x2 && self.x2 >= other.x1 && self.y1 <= other.y2 && self.y2 >= other.y1
     }

@@ -12,16 +12,16 @@ use specs::prelude::*;
 use std::cmp::{max, min};
 
 pub const MAPWIDTH: usize = 80;
-pub const MAPHEIGHT: usize = 50;
+pub const MAPHEIGHT: usize = 43;
 pub const MAPCOUNT: usize = MAPHEIGHT * MAPWIDTH;
 
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
 pub enum TileType {
     Wall,
     Floor,
 }
 
-#[derive(Default)]
+#[derive(Default, Serialize, Deserialize, Clone)]
 pub struct Map {
     pub tiles: Vec<TileType>,
     pub rooms: Vec<Rect>,
@@ -30,6 +30,9 @@ pub struct Map {
     pub revealed_tiles: Vec<bool>,
     pub visible_tiles: Vec<bool>,
     pub blocked: Vec<bool>,
+
+    #[serde(skip_serializing)]
+    #[serde(skip_deserializing)]
     pub tile_content: Vec<Vec<Entity>>,
 }
 
@@ -184,7 +187,7 @@ impl BaseMap for Map {
     fn get_pathing_distance(&self, idx1: i32, idx2: i32) -> f32 {
         let p1 = Point::new(idx1 % self.width, idx1 / self.width);
         let p2 = Point::new(idx2 % self.width, idx2 / self.width);
-        DistanceAlg::Pythagoras.distance2d(p1, p2)
+        rltk::DistanceAlg::Pythagoras.distance2d(p1, p2)
     }
 }
 
@@ -205,7 +208,7 @@ impl Algorithm2D for Map {
     }
 }
 
-pub fn draw_map(ecs: &World, ctx: &mut Fractal) {
+pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
     let map = ecs.fetch::<Map>();
 
     let mut y = 0;
@@ -218,11 +221,11 @@ pub fn draw_map(ecs: &World, ctx: &mut Fractal) {
             let mut fg;
             match tile {
                 TileType::Floor => {
-                    glyph = to_cp437('.');
+                    glyph = rltk::to_cp437('.');
                     fg = RGB::from_f32(0.0, 0.5, 0.5);
                 }
                 TileType::Wall => {
-                    glyph = to_cp437('#');
+                    glyph = rltk::to_cp437('#');
                     fg = RGB::from_f32(0., 1.0, 0.);
                 }
             }

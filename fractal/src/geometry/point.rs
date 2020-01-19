@@ -1,6 +1,6 @@
 use std::ops;
 
-#[derive(Eq, PartialEq, Copy, Clone, Debug, Hash)]
+#[derive(Eq, PartialEq, Copy, Clone, Debug, Hash, Serialize, Deserialize)]
 /// Helper struct defining a 2D point in space.
 pub struct Point {
     pub x: i32,
