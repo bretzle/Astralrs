@@ -1,6 +1,5 @@
 use crate::rect::Rect;
 use fractal::codepage437::to_cp437;
-use fractal::color;
 use fractal::color::RGB;
 use fractal::console::Console;
 use fractal::fractal::Fractal;

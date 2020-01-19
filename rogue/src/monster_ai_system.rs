@@ -3,7 +3,6 @@ use crate::map::Map;
 use crate::RunState;
 use fractal::geometry::DistanceAlg::Pythagoras;
 use fractal::geometry::Point;
-use fractal::log;
 use fractal::pathfinding::astar::a_star_search;
 use specs::prelude::*;
 

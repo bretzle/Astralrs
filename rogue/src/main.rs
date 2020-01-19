@@ -13,6 +13,7 @@ mod melee_compat_system;
 mod monster_ai_system;
 mod player;
 mod rect;
+mod spawner;
 mod visibility_system;
 
 use crate::components::*;
@@ -23,8 +24,6 @@ use crate::melee_compat_system::MeleeCombatSystem;
 use crate::monster_ai_system::MonsterAI;
 use crate::player::*;
 use crate::visibility_system::VisibilitySystem;
-use fractal::codepage437::to_cp437;
-use fractal::color;
 use fractal::console::Console;
 use fractal::fractal::main_loop;
 use fractal::fractal::Fractal;
@@ -127,81 +126,16 @@ fn main() {
     gs.ecs.register::<WantsToMelee>();
     gs.ecs.register::<SufferDamage>();
 
+    gs.ecs.insert(RandomNumberGenerator::new());
+
     let map: Map = Map::new_map_rooms_and_corridors();
     let (player_x, player_y) = map.rooms[0].center();
 
-    let player_entity = gs
-        .ecs
-        .create_entity()
-        .with(Position {
-            x: player_x,
-            y: player_y,
-        })
-        .with(Renderable {
-            glyph: to_cp437('@'),
-            fg: color::YELLOW,
-            bg: color::BLACK,
-        })
-        .with(Player {})
-        .with(Viewshed {
-            visible_tiles: Vec::new(),
-            range: 8,
-            dirty: true,
-        })
-        .with(Name {
-            name: "Player".to_string(),
-        })
-        .with(CombatStats {
-            max_hp: 30,
-            hp: 30,
-            defense: 2,
-            power: 5,
-        })
-        .build();
+    let player_entity = spawner::player(&mut gs.ecs, player_x, player_y);
 
-    let mut rng = RandomNumberGenerator::new();
-    for (i, room) in map.rooms.iter().skip(1).enumerate() {
+    for room in map.rooms.iter().skip(1) {
         let (x, y) = room.center();
-
-        let glyph: u8;
-        let name: String;
-        let roll = rng.roll_dice(1, 2);
-        match roll {
-            1 => {
-                glyph = to_cp437('g');
-                name = "Goblin".to_string();
-            }
-            _ => {
-                glyph = to_cp437('o');
-                name = "Orc".to_string();
-            }
-        }
-
-        gs.ecs
-            .create_entity()
-            .with(Position { x, y })
-            .with(Renderable {
-                glyph,
-                fg: color::RED,
-                bg: color::BLACK,
-            })
-            .with(Viewshed {
-                visible_tiles: Vec::new(),
-                range: 8,
-                dirty: true,
-            })
-            .with(Monster {})
-            .with(Name {
-                name: format!("{} #{}", &name, i),
-            })
-            .with(BlocksTile {})
-            .with(CombatStats {
-                max_hp: 16,
-                hp: 16,
-                defense: 1,
-                power: 4,
-            })
-            .build();
+        spawner::random_monster(&mut gs.ecs, x, y);
     }
 
     gs.ecs.insert(map);
