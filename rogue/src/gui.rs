@@ -45,6 +45,10 @@ pub fn draw_ui(ecs: &World, ctx: &mut Fractal) {
         ctx.draw_bar_horizontal(28, 43, 51, stats.hp, stats.max_hp, color::RED, color::BLACK);
     }
 
+    let map = ecs.fetch::<Map>();
+    let depth = format!("Depth: {}", map.depth);
+    ctx.print_color(2, 43, color::YELLOW, color::BLACK, &depth);
+
     let log = ecs.fetch::<GameLog>();
     let mut y = 44;
     for s in log.entries.iter() {
