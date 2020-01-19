@@ -1,4 +1,5 @@
 use crate::components::*;
+use crate::gamelog::GameLog;
 use fractal::color;
 use fractal::console::Console;
 use fractal::fractal::Fractal;
@@ -14,5 +15,15 @@ pub fn draw_ui(ecs: &World, ctx: &mut Fractal) {
         ctx.print_color(12, 43, color::YELLOW, color::BLACK, &health);
 
         ctx.draw_bar_horizontal(28, 43, 51, stats.hp, stats.max_hp, color::RED, color::BLACK);
+    }
+
+    let log = ecs.fetch::<GameLog>();
+
+    let mut y = 44;
+    for s in log.entries.iter() {
+        if y < 49 {
+            ctx.print(2, y, &s.to_string());
+        }
+        y += 1;
     }
 }

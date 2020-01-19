@@ -5,6 +5,7 @@ extern crate specs_derive;
 
 mod components;
 mod damage_system;
+mod gamelog;
 mod gui;
 mod map;
 mod map_index_system;
@@ -206,6 +207,9 @@ fn main() {
     gs.ecs.insert(Point::new(player_x, player_y));
     gs.ecs.insert(player_entity);
     gs.ecs.insert(RunState::PreRun);
+    gs.ecs.insert(gamelog::GameLog {
+        entries: vec!["Welcome to Rusty Roguelike".to_string()],
+    });
 
     main_loop(context, gs);
 }
