@@ -5,6 +5,7 @@ extern crate specs_derive;
 
 mod components;
 mod damage_system;
+mod gui;
 mod map;
 mod map_index_system;
 mod melee_compat_system;
@@ -104,6 +105,8 @@ impl GameState for State {
                 ctx.set(pos.x, pos.y, render.fg, render.bg, render.glyph)
             }
         }
+
+        gui::draw_ui(&self.ecs, ctx);
     }
 }
 

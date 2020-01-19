@@ -13,7 +13,7 @@ use specs::prelude::*;
 use std::cmp::{max, min};
 
 const MAPWIDTH: usize = 80;
-const MAPHEIGHT: usize = 43;
+const MAPHEIGHT: usize = 50;
 const MAPCOUNT: usize = MAPHEIGHT * MAPWIDTH;
 
 #[derive(PartialEq, Copy, Clone)]
