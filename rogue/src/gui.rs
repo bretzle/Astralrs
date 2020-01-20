@@ -33,6 +33,12 @@ pub enum ItemMenuResult {
     Selected,
 }
 
+#[derive(PartialEq, Copy, Clone)]
+pub enum GameOverResult {
+    NoSelection,
+    QuitToMenu,
+}
+
 pub fn draw_ui(ecs: &World, ctx: &mut Fractal) {
     ctx.draw_box(0, 43, 79, 6, color::WHITE, color::BLACK);
 
@@ -471,5 +477,33 @@ pub fn remove_item_menu(gs: &mut State, ctx: &mut Fractal) -> (ItemMenuResult, O
                 (ItemMenuResult::NoResponse, None)
             }
         },
+    }
+}
+
+pub fn game_over(ctx: &mut Fractal) -> GameOverResult {
+    ctx.print_color_centered(15, color::YELLOW, color::BLACK, "Your journey has ended!");
+    ctx.print_color_centered(
+        17,
+        color::WHITE,
+        color::BLACK,
+        "One day, we'll tell you all about how you did.",
+    );
+    ctx.print_color_centered(
+        18,
+        color::WHITE,
+        color::BLACK,
+        "That day, sadly, is not in this chapter..",
+    );
+
+    ctx.print_color_centered(
+        20,
+        color::MAGENTA,
+        color::BLACK,
+        "Press any key to return to the menu.",
+    );
+
+    match ctx.key {
+        None => GameOverResult::NoSelection,
+        Some(_) => GameOverResult::QuitToMenu,
     }
 }
