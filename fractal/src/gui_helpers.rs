@@ -1,5 +1,6 @@
 use crate::codepage437::to_cp437;
 use crate::color::RGB;
+use crate::color;
 use crate::console::Console;
 
 /// Draws a box, starting at x/y with the extents width/height using CP437 line characters
@@ -17,8 +18,8 @@ pub fn draw_box(
             console.set(
                 x,
                 y,
-                RGB::from_f32(1.0, 1.0, 1.0),
-                RGB::from_f32(0.0, 0.0, 0.0),
+                color::WHITE,
+                color::BLACK,
                 32,
             );
         }
@@ -77,8 +78,8 @@ pub fn draw_box_double(
             console.set(
                 x,
                 y,
-                RGB::from_f32(1.0, 1.0, 1.0),
-                RGB::from_f32(0.0, 0.0, 0.0),
+                color::WHITE,
+                color::BLACK,
                 32,
             );
         }

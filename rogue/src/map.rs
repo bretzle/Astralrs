@@ -1,6 +1,7 @@
 use crate::rect::Rect;
 use fractal::codepage437::to_cp437;
 use fractal::color::RGB;
+use fractal::color;
 use fractal::console::Console;
 use fractal::fractal::Fractal;
 use fractal::geometry::DistanceAlg::Pythagoras;
@@ -228,21 +229,21 @@ pub fn draw_map(ecs: &World, ctx: &mut Fractal) {
             match tile {
                 TileType::Floor => {
                     glyph = to_cp437('.');
-                    fg = RGB::from_f32(0.0, 0.5, 0.5);
+                    fg = RGB::from_u8(0, 128, 128);
                 }
                 TileType::Wall => {
                     glyph = to_cp437('#');
-                    fg = RGB::from_f32(0., 1.0, 0.);
+                    fg = color::GREEN;
                 }
                 TileType::DownStairs => {
                     glyph = to_cp437('>');
-                    fg = RGB::from_f32(0., 1.0, 1.0);
+                    fg = color::CYAN;
                 }
             }
             if !map.visible_tiles[idx] {
                 fg = fg.to_greyscale()
             }
-            ctx.set(x, y, fg, RGB::from_f32(0., 0., 0.), glyph);
+            ctx.set(x, y, fg, color::BLACK, glyph);
         }
 
         // Move the coordinates

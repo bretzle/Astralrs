@@ -1,4 +1,5 @@
 use crate::codepage437::string_to_cp437;
+use crate::color;
 use crate::color::RGB;
 use crate::console::Console;
 use crate::console::Tile;
@@ -21,13 +22,13 @@ impl TextBlock {
             y,
             width,
             height,
-            fg: RGB::from_f32(1.0, 1.0, 1.0),
-            bg: RGB::from_f32(0.0, 0.0, 0.0),
+            fg: color::WHITE,
+            bg: color::BLACK,
             buffer: vec![
                 Tile {
                     glyph: 0,
-                    fg: RGB::from_f32(1.0, 1.0, 1.0),
-                    bg: RGB::from_f32(0.0, 0.0, 0.0)
+                    fg: color::WHITE,
+                    bg: color::BLACK,
                 };
                 width as usize * height as usize
             ],
@@ -105,8 +106,8 @@ impl TextBlock {
                 CommandType::Background { col } => self.bg = *col,
                 CommandType::Reset {} => {
                     self.cursor = (0, 0);
-                    self.fg = RGB::from_f32(1.0, 1.0, 1.0);
-                    self.bg = RGB::from_f32(0.0, 0.0, 0.0);
+                    self.fg = color::WHITE;
+                    self.bg = color::BLACK;
                 }
 
                 CommandType::TextWrapper { block: t } => {
