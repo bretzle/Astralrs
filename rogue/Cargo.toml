@@ -15,8 +15,5 @@ serde_derive = '1.0.104'
 version = '0.15.1'
 features = ['serde']
 
-[dependencies.macros]
-path = '../macros'
-
 [dependencies.fractal]
 path = '../fractal'
