@@ -4,15 +4,19 @@ use regex::Regex;
 use std::error;
 use std::fmt;
 
-// Describes a dice roll type
+/// Describes a dice roll type
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub struct DiceType {
+    /// Number of dice
     pub n_dice: i32,
+    /// How many sides each dice has
     pub die_type: i32,
+    /// A flat bonus that will be added to the roll
     pub bonus: i32,
 }
 
 impl DiceType {
+    /// Constructor
     pub fn new(n_dice: i32, die_type: i32, bonus: i32) -> Self {
         DiceType {
             n_dice,
@@ -32,6 +36,7 @@ impl Default for DiceType {
     }
 }
 
+/// Error is created when a problem occurs when parsing a dice
 #[derive(Debug, Clone)]
 pub struct DiceParseError;
 

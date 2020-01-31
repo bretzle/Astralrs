@@ -6,6 +6,7 @@ use crate::color::RGB;
 use crate::console::Console;
 use crate::console::Tile;
 
+/// A block of text
 pub struct TextBlock {
     x: i32,
     y: i32,
@@ -18,6 +19,7 @@ pub struct TextBlock {
 }
 
 impl TextBlock {
+    /// Constructor
     pub fn new(x: i32, y: i32, width: i32, height: i32) -> TextBlock {
         TextBlock {
             x,
@@ -38,19 +40,26 @@ impl TextBlock {
         }
     }
 
+    /// Sets the foreground
     pub fn fg(&mut self, fg: RGB) {
         self.fg = fg;
     }
+
+    /// Sets the background
     pub fn bg(&mut self, bg: RGB) {
         self.bg = bg;
     }
+
+    /// Moves the cursor to a new location
     pub fn move_to(&mut self, x: i32, y: i32) {
         self.cursor = (x, y);
     }
+
     fn at(&self, x: i32, y: i32) -> usize {
         ((y * self.width) + x) as usize
     }
 
+    /// Render the textblock onto a console
     pub fn render(&self, mut console: impl AsMut<dyn Console>) {
         for y in 0..self.height {
             for x in 0..self.width {
@@ -65,6 +74,7 @@ impl TextBlock {
         }
     }
 
+    /// Updates the current TextBlock with the commands from a TextBuilder
     pub fn print(&mut self, text: &TextBuilder) {
         for cmd in &text.commands {
             match cmd {
@@ -138,57 +148,96 @@ impl TextBlock {
     }
 }
 
+/// The types of commands that a TextBuilder can have
 pub enum CommandType {
-    Text { block: Vec<u8> },
-    Centered { block: Vec<u8> },
+    /// TODO
+    Text {
+        /// TODO
+        block: Vec<u8>,
+    },
+    /// TODO
+    Centered {
+        /// TODO
+        block: Vec<u8>,
+    },
+    /// TODO
     NewLine {},
-    Foreground { col: RGB },
-    Background { col: RGB },
-    TextWrapper { block: String },
+    /// TODO
+    Foreground {
+        /// TODO
+        col: RGB,
+    },
+    /// TODO
+    Background {
+        /// TODO
+        col: RGB,
+    },
+    /// TODO
+    TextWrapper {
+        /// TODO
+        block: String,
+    },
+    /// TODO
     Reset {},
 }
 
+/// Struct to easily create TextBlocks
 pub struct TextBuilder {
     commands: Vec<CommandType>,
 }
 
 impl TextBuilder {
-    pub fn empty() -> TextBuilder {
-        TextBuilder {
-            commands: Vec::new(),
-        }
-    }
-
+    /// Appends a string to the buffer
     pub fn append(&mut self, text: &str) -> &mut Self {
         let chrs = string_to_cp437(&text);
         self.commands.push(CommandType::Text { block: chrs });
         self
     }
+
+    /// Appends a centered string to the buffer
     pub fn centered(&mut self, text: &str) -> &mut Self {
         let chrs = string_to_cp437(&text);
         self.commands.push(CommandType::Centered { block: chrs });
         self
     }
+
+    /// Move cursor to (0, 0) and reset colors to default
     pub fn reset(&mut self) -> &mut Self {
         self.commands.push(CommandType::Reset {});
         self
     }
+
+    /// Adds a new line to the text block
     pub fn ln(&mut self) -> &mut Self {
         self.commands.push(CommandType::NewLine {});
         self
     }
+
+    /// Sets the foreground color
     pub fn fg(&mut self, col: RGB) -> &mut Self {
         self.commands.push(CommandType::Foreground { col });
         self
     }
+
+    /// Sets the background color
     pub fn bg(&mut self, col: RGB) -> &mut Self {
         self.commands.push(CommandType::Background { col });
         self
     }
+
+    /// Append a string. will wrap around to the next line if there is not enough space
     pub fn line_wrap(&mut self, text: &str) -> &mut Self {
         self.commands.push(CommandType::TextWrapper {
             block: text.to_string(),
         });
         self
+    }
+}
+
+impl Default for TextBuilder {
+    fn default() -> Self {
+        Self {
+            commands: Vec::new(),
+        }
     }
 }

@@ -12,8 +12,11 @@ use std::any::Any;
 /// The internal storage type for tiles in a simple console.
 #[derive(PartialEq, Copy, Clone)]
 pub struct Tile {
+    /// The CP437 value to render the tile as
     pub glyph: u8,
+    /// The Color of the glyph
     pub fg: RGB,
+    /// The Color behind the glyph
     pub bg: RGB,
 }
 
@@ -25,7 +28,7 @@ pub trait Console {
     /// Gets the dimensions of the console in characters
     fn get_char_size(&self) -> (u32, u32);
 
-    // Resizes the viewport
+    /// Resizes the viewport
     fn resize_pixels(&mut self, width: u32, height: u32);
 
     /// Tells the console to draw itself via OpenGL.
@@ -111,7 +114,7 @@ pub trait Console {
     /// drawing walls between tiles.
     fn set_offset(&mut self, x: f32, y: f32);
 
-    // Produces the implementor as an Any that can be matched to determine type and access
-    // natively.
+    /// Produces the implementor as an Any that can be matched to determine type and access
+    /// natively.
     fn as_any(&self) -> &dyn Any;
 }

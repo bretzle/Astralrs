@@ -1,4 +1,5 @@
 #![allow(unsafe_code)]
+#![allow(missing_docs)]
 
 //! A port of Auburn's FastNoise to Rust.
 //! I really didn't like the noise libraries I could find, so I ported the one I like.
