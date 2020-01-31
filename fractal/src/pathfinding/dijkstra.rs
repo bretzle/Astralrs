@@ -1,3 +1,6 @@
+//! Implementation of Dijkstra Pathfinding algorithm
+//! Based off of https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+
 #![allow(unsafe_code)]
 
 use crate::pathfinding::BaseMap;
@@ -11,6 +14,7 @@ use std::mem;
 /// size_x and size_y are stored for overflow avoidance.
 /// max_depth is the maximum number of iterations this search shall support.
 pub struct DijkstraMap {
+    /// Vector of floats, having size equal to `size_x` * `size_y`
     pub map: Vec<f32>,
     size_x: i32,
     size_y: i32,

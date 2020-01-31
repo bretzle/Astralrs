@@ -6,6 +6,7 @@ use crate::parsing::DiceType;
 use rand::{Rng, RngCore, SeedableRng};
 use rand_xorshift::XorShiftRng;
 
+/// Struct for Random Number Generation
 pub struct RandomNumberGenerator {
     rng: XorShiftRng,
 }
@@ -47,17 +48,17 @@ impl RandomNumberGenerator {
         (0..n).map(|_| self.range(1, die_type + 1)).sum()
     }
 
-    // Returns the RNG's next unsigned-64 type
+    /// Returns the RNG's next unsigned-64 type
     pub fn next_u64(&mut self) -> u64 {
         self.rng.next_u64()
     }
 
-    // Rolls dice based on a DiceType struct, including application of the bonus
+    /// Rolls dice based on a DiceType struct, including application of the bonus
     pub fn roll(&mut self, dice: DiceType) -> i32 {
         self.roll_dice(dice.n_dice, dice.die_type) + dice.bonus
     }
 
-    // Rolls dice based on passing in a string, such as roll_str("1d12")
+    /// Rolls dice based on passing in a string, such as roll_str("1d12")
     pub fn roll_str<S: ToString>(&mut self, dice: S) -> Result<i32, DiceParseError> {
         match parse_dice_string(&dice.to_string()) {
             Ok(dt) => Ok(self.roll(dt)),
@@ -65,7 +66,7 @@ impl RandomNumberGenerator {
         }
     }
 
-    // Returns a random index into a slice
+    /// Returns a random index into a slice
     pub fn random_slice_index<T>(&mut self, slice: &[T]) -> Option<usize> {
         if slice.is_empty() {
             None
@@ -79,7 +80,7 @@ impl RandomNumberGenerator {
         }
     }
 
-    // Returns a random entry in a slice (or none if empty)
+    /// Returns a random entry in a slice (or none if empty)
     pub fn random_slice_entry<'a, T>(&mut self, slice: &'a [T]) -> Option<&'a T> {
         if slice.is_empty() {
             None

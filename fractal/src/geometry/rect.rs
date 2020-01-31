@@ -4,11 +4,16 @@ use crate::geometry::point::Point;
 use std::collections::HashSet;
 use std::ops;
 
+/// Its a rectangle.
 #[derive(PartialEq, Eq, Copy, Clone, Debug)]
 pub struct Rect {
+    /// X coord of first point
     pub x1: i32,
+    /// X coord of second point
     pub x2: i32,
+    /// Y coord of first point
     pub y1: i32,
+    /// Y coord of second point
     pub y2: i32,
 }
 
@@ -19,7 +24,7 @@ impl Default for Rect {
 }
 
 impl Rect {
-    // Create a new rectangle, specifying X/Y Width/Height
+    /// Create a new rectangle, specifying X/Y Width/Height
     pub fn new(x: i32, y: i32, w: i32, h: i32) -> Rect {
         Rect {
             x1: x,
@@ -29,12 +34,12 @@ impl Rect {
         }
     }
 
-    // Create a new rectangle, specifying exact dimensions
+    /// Create a new rectangle, specifying exact dimensions
     pub fn new_exact(x1: i32, y1: i32, x2: i32, y2: i32) -> Rect {
         Rect { x1, y1, x2, y2 }
     }
 
-    // Creates a zero rectangle
+    /// Creates a zero rectangle
     pub fn zero() -> Rect {
         Rect {
             x1: 0,
@@ -44,22 +49,22 @@ impl Rect {
         }
     }
 
-    // Returns true if this overlaps with other
+    /// Returns true if this overlaps with other
     pub fn intersect(&self, other: &Rect) -> bool {
         self.x1 <= other.x2 && self.x2 >= other.x1 && self.y1 <= other.y2 && self.y2 >= other.y1
     }
 
-    // Returns the center of the rectangle
+    /// Returns the center of the rectangle
     pub fn center(&self) -> Point {
         Point::new((self.x1 + self.x2) / 2, (self.y1 + self.y2) / 2)
     }
 
-    // Returns true if a point is inside the rectangle
+    /// Returns true if a point is inside the rectangle
     pub fn point_in_rect(&self, point: Point) -> bool {
         point.x >= self.x1 && point.x <= self.x2 && point.y >= self.y1 && point.y <= self.y2
     }
 
-    // Calls a function for each x/y point in the rectangle
+    /// Calls a function for each x/y point in the rectangle
     pub fn for_each<F>(&self, mut f: F)
     where
         F: FnMut(Point),
@@ -71,7 +76,7 @@ impl Rect {
         }
     }
 
-    // Gets a set of all tiles in the rectangle
+    /// Gets a set of all tiles in the rectangle
     pub fn point_set(&self) -> HashSet<Point> {
         let mut result = HashSet::new();
         for y in self.y1..=self.y2 {
@@ -82,12 +87,12 @@ impl Rect {
         result
     }
 
-    // Returns the rectangle's width
+    /// Returns the rectangle's width
     pub fn width(&self) -> i32 {
         i32::abs(self.x2 - self.x1)
     }
 
-    // Returns the rectangle's height
+    /// Returns the rectangle's height
     pub fn height(&self) -> i32 {
         i32::abs(self.y2 - self.y1)
     }

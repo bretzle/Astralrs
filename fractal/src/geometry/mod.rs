@@ -20,9 +20,13 @@ pub use rect::Rect;
 
 /// Enumeration of available 2D Distance algorithms
 pub enum DistanceAlg {
+    /// Shortest distance between two points
     Pythagoras,
+    /// Shortest distance between two points squared
     PythagorasSquared,
+    /// Distance between two points by traveling along axis
     Manhattan,
+    /// Chebyshev distance TODO: explain better
     Chebyshev,
 }
 
@@ -49,7 +53,9 @@ impl DistanceAlg {
 
 /// Enumeration of available 2D Distance algorithms
 pub enum LineAlg {
+    /// TODO
     Bresenham,
+    /// TODO
     Vector,
 }
 

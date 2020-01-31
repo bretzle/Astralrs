@@ -1,12 +1,17 @@
 //! Color related structs and constants
 
+#![allow(missing_docs)]
+
 use crate::rex::XpColor;
 
 #[derive(PartialEq, Copy, Clone, Default, Debug, Serialize, Deserialize)]
 /// Represents an R/G/B triplet
 pub struct RGB {
+    /// Red component. 0..255
     pub r: u8,
+    /// Green component. 0..255
     pub g: u8,
+    /// Blue component. 0.255
     pub b: u8,
 }
 

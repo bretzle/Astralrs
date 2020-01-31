@@ -18,31 +18,53 @@ use std::any::Any;
 /// A display console, used internally to provide console render support.
 /// Public in case you want to play with it, or access it directly.
 pub struct DisplayConsole {
+    /// Instance of a console that lives on the heap
     pub console: Box<dyn Console>,
+    /// shader index
     pub shader_index: usize,
+    /// font index
     pub font_index: usize,
 }
 
 /// An FRACTAL context.
 pub struct Fractal {
+    /// A OpenGL backend context
     pub backend: FractalPlatform,
+    /// Width of the window in pixels
     pub width_pixels: u32,
+    /// Height of the window in pixels
     pub height_pixels: u32,
+    /// A Vector of fonts the game will use
     pub fonts: Vec<Font>,
+    /// A Vector of shaders the game will use
     pub shaders: Vec<Shader>,
+    /// A Vector of Consoles the game can display
     pub consoles: Vec<DisplayConsole>,
+    /// The current frames per second
     pub fps: f32,
+    /// The time in milliseconds it took to process the last frame
     pub frame_time_ms: f32,
+    /// Index to the current console being rendered
     pub active_console: usize,
+    /// Contains a keycode if a key was pressed
     pub key: Option<VirtualKeyCode>,
+    /// The position of the mouse
     pub mouse_pos: (i32, i32),
+    /// True if the mouse was left clicked
     pub left_click: bool,
+    /// True if a shift was held down
     pub shift: bool,
+    /// True if Control was held down
     pub control: bool,
+    /// True if alt was held down
     pub alt: bool,
+    /// Link to a website ? TODO
     pub web_button: Option<String>,
+    /// True if the game is shutting down
     pub quitting: bool,
+    /// Should console use included scanlines shader
     pub post_scanlines: bool,
+    /// Should console use included screenburn shader
     pub post_screenburn: bool,
 }
 

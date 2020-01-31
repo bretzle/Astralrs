@@ -7,8 +7,11 @@ use std::ops;
 #[derive(Eq, PartialEq, Copy, Clone, Debug)]
 /// Helper struct defining a 2D point in space.
 pub struct Point3 {
+    /// X Coordinate
     pub x: i32,
+    /// Y Coordinate
     pub y: i32,
+    /// Z Coordinate
     pub z: i32,
 }
 

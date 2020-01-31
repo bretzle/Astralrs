@@ -2,6 +2,7 @@ use crate::geometry::point::Point;
 use core::iter::Iterator;
 use ultraviolet::Vec2;
 
+/// Reprsents a line as a vector
 pub struct VectorLine {
     end: Point,
     current_pos: Vec2,
@@ -11,6 +12,7 @@ pub struct VectorLine {
 }
 
 impl VectorLine {
+    /// Constructor
     pub fn new(start: Point, end: Point) -> Self {
         let current_pos = Vec2::new(start.x as f32 + 0.5, start.y as f32 + 0.5);
         let destination = Vec2::new(end.x as f32 + 0.5, end.y as f32 + 0.5);

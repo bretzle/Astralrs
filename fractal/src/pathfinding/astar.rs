@@ -1,3 +1,6 @@
+//! Implementation of A* Pathfinding algorithm
+//! Based off of https://en.wikipedia.org/wiki/A*_search_algorithm
+
 use crate::pathfinding::BaseMap;
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
@@ -13,25 +16,28 @@ pub fn a_star_search(start: i32, end: i32, map: &dyn BaseMap) -> NavigationPath 
 }
 
 /// Holds the result of an A-Star navigation query.
-/// `destination` is the index of the target tile.
-/// `success` is true if it reached the target, false otherwise.
-/// `steps` is a vector of each step towards the target, *including* the starting position.
 #[derive(Clone, Default)]
 pub struct NavigationPath {
+    /// Index of the target tile
     pub destination: i32,
+    /// True if it reached the target, False otherwise.
     pub success: bool,
+    /// Vector of each step towards the target.
+    /// *includes* the starting position
     pub steps: Vec<i32>,
 }
 
 #[allow(dead_code)]
 #[derive(Copy, Clone)]
-/// Node is an internal step inside the A-Star path (not exposed/public). Idx is the current cell,
-/// f is the total cost, g the neighbor cost, and h the heuristic cost.
-/// See: https://en.wikipedia.org/wiki/A*_search_algorithm
+/// Node is an internal step inside the A-Star path.
 struct Node {
+    /// Index of current cell
     idx: i32,
+    /// Total cost
     f: f32,
+    /// Neighbor cost
     g: f32,
+    /// Heuristic cost
     h: f32,
 }
 
