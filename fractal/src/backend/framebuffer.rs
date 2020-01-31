@@ -4,12 +4,15 @@
 
 use glow::HasContext;
 
+/// A frame buffer
 pub struct Framebuffer {
     fbo: u32,
+    /// a texture
     pub texture: u32,
 }
 
 impl Framebuffer {
+    /// builds a frame buffer
     pub fn build_fbo(gl: &glow::Context, width: i32, height: i32) -> Framebuffer {
         let fbo;
         let buffer;
@@ -68,12 +71,14 @@ impl Framebuffer {
         }
     }
 
+    /// Binds the frame buffer with OpenGL
     pub fn bind(&self, gl: &glow::Context) {
         unsafe {
             gl.bind_framebuffer(glow::FRAMEBUFFER, Some(self.fbo));
         }
     }
 
+    /// Removes the frame buffer from OpenGL
     pub fn default(&self, gl: &glow::Context) {
         unsafe {
             gl.bind_framebuffer(glow::FRAMEBUFFER, None);

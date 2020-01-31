@@ -12,6 +12,7 @@ use crate::backend::WrappedContext;
 use crate::fractal::Fractal;
 use glutin::{dpi::LogicalSize, event_loop::EventLoop, window::WindowBuilder, ContextBuilder};
 
+/// Creates a raw Fractal instance
 pub fn init_raw<S: ToString>(width_pixels: u32, height_pixels: u32, window_title: S) -> Fractal {
     let el = EventLoop::new();
     let wb = WindowBuilder::new()

@@ -1,4 +1,4 @@
-//! TODO
+//! Backend for [SimpleConsole]
 
 #![allow(unsafe_code)]
 
@@ -10,6 +10,7 @@ use crate::console::Tile;
 use glow::HasContext;
 use std::mem;
 
+/// The backend for [SimpleConsole]
 pub struct SimpleConsoleBackend {
     vertex_buffer: Vec<f32>,
     index_buffer: Vec<i32>,
@@ -21,6 +22,7 @@ pub struct SimpleConsoleBackend {
 }
 
 impl SimpleConsoleBackend {
+    /// Constructor
     pub fn new(platform: &FractalPlatform, width: usize, height: usize) -> SimpleConsoleBackend {
         let vertex_capacity: usize = (11 * width * height) * 4;
         let index_capacity: usize = 6 * width * height;
@@ -254,6 +256,7 @@ impl SimpleConsoleBackend {
         }
     }
 
+    /// Draws the console to the OpenGL context
     pub fn gl_draw(
         &mut self,
         font: &Font,

@@ -12,6 +12,7 @@ use std::time::Instant;
 
 const TICK_TYPE: ControlFlow = ControlFlow::Poll;
 
+/// The main loop 
 pub fn main_loop<GS: GameState>(mut fractal: Fractal, mut gamestate: GS) {
     unsafe {
         fractal.backend.platform.gl.viewport(

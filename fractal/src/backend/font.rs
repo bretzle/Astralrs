@@ -10,12 +10,17 @@ use image::{ColorType, GenericImageView};
 #[derive(PartialEq, Clone)]
 /// FRACTAL's representation of a font or tileset file.
 pub struct Font {
+    /// Name of the file
     pub bitmap_file: String,
+    /// Number of charaters in a row
     pub width: u32,
+    /// Number of rows
     pub height: u32,
 
+    /// OpenGL id
     pub gl_id: Option<u32>,
 
+    /// Size of one character
     pub tile_size: (u32, u32),
 }
 

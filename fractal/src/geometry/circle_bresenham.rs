@@ -16,6 +16,7 @@ pub struct BresenhamCircle {
 impl BresenhamCircle {
     #[inline]
     #[allow(dead_code)]
+    /// Constructor
     pub fn new(center_x: i32, center_y: i32, radius: i32) -> Self {
         Self {
             center_x,
