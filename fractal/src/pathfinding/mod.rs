@@ -1,3 +1,5 @@
+//! This module contains all kinds of pathfinding implementations
+
 pub mod astar;
 pub mod dijkstra;
 

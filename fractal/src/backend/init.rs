@@ -1,3 +1,5 @@
+//! This module contains a single helper function
+
 #![allow(unsafe_code)]
 
 use crate::backend::framebuffer::Framebuffer;

@@ -1,3 +1,5 @@
+//! This module contains the main loop
+
 #![allow(unsafe_code)]
 
 use crate::backend::framebuffer::Framebuffer;

@@ -1,3 +1,5 @@
+//! Stores fonts in an interal dictionary
+
 use std::collections::HashMap;
 
 use std::sync::Mutex;
@@ -6,15 +8,18 @@ const TERMINAL_8_8_BYTES: &[u8] = include_bytes!("../resources/terminal8x8.png")
 const TERMINAL_8_16_BYTES: &[u8] = include_bytes!("../resources/vga8x16.png");
 
 lazy_static! {
+    /// A global instance of Dictionary wrapped in a mutex
     pub static ref EMBED: Mutex<Dictionary> = Mutex::new(Dictionary::new());
 }
 
+/// Dictionary of fonts
 #[derive(Default)]
 pub struct Dictionary {
     entries: HashMap<String, &'static [u8]>,
 }
 
 impl Dictionary {
+    /// Creates the default dictionary
     pub fn new() -> Dictionary {
         let mut dict = Dictionary {
             entries: HashMap::new(),
@@ -24,6 +29,7 @@ impl Dictionary {
         dict
     }
 
+    /// Retrieves a font from the dictionary
     pub fn get_resource(&self, path: String) -> Option<&'static [u8]> {
         if self.entries.contains_key(&path) {
             return Some(&self.entries[&path]);
@@ -31,6 +37,7 @@ impl Dictionary {
         None
     }
 
+    /// Adds a font from the dictionary
     pub fn add_resource(&mut self, path: String, bytes: &'static [u8]) {
         self.entries.insert(path, bytes);
     }

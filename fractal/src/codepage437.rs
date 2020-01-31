@@ -1,3 +1,6 @@
+//! Helper functions for easily converting chars to CP437 keycodes
+//! Info: https://en.wikipedia.org/wiki/Code_page_437
+
 /// Converts a unicode character to a CP437 equivalent, returning 0 if it didn't have a match
 pub fn to_cp437(c: char) -> u8 {
     match c {

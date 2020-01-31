@@ -1,3 +1,6 @@
+//! This module defines what a console is.
+//! A console is the same as a display or screen
+
 use crate::backend::font::Font;
 use crate::backend::shader::Shader;
 use crate::backend::FractalPlatform;

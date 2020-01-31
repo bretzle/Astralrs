@@ -1,3 +1,5 @@
+//! Helper functions for fov calculations
+
 use crate::geometry::BresenhamCircle;
 use crate::geometry::Point;
 use crate::geometry::VectorLine;

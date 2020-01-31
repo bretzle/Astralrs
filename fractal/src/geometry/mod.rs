@@ -1,3 +1,5 @@
+//! This module contains a bunch of geometic structs and functions
+
 use std::cmp::{max, min};
 
 mod circle_bresenham;

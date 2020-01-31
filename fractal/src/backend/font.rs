@@ -1,3 +1,5 @@
+//! This module contains the Font struct and implementaions 
+
 #![allow(unsafe_code)]
 
 use crate::backend::FractalPlatform;

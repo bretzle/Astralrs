@@ -1,3 +1,5 @@
+//! The Actual core of the fractal engine
+
 use crate::backend::font::Font;
 use crate::backend::init::init_raw;
 use crate::backend::mainloop;

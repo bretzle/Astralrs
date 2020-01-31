@@ -1,7 +1,4 @@
-// The work here is heavily derived from rs-rexpaint, https://gitlab.com/medusacle/rs-rexpaint
-// It is Copyright (c) 2018, Mara <cyphergothic@protonmail.com>
-// It's under the DWTFYW Public License 2.0, so inclusion in an MIT-licensed program
-// isn't a problem.
+//! The work here is heavily derived from rs-rexpaint, https://gitlab.com/medusacle/rs-rexpaint
 
 #![deny(non_upper_case_globals)]
 #![deny(non_camel_case_types)]

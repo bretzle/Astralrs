@@ -1,5 +1,5 @@
 #![deny(
-    // missing_docs,
+    missing_docs,
     trivial_casts,
     trivial_numeric_casts,
     unsafe_code,
@@ -34,6 +34,7 @@ pub mod rex;
 pub mod simple_console;
 pub mod textblock;
 
+/// Emedds a resource into a byte array
 #[macro_export]
 macro_rules! embedded_resource {
     ($resource_name : ident, $filename : expr) => {
@@ -41,6 +42,7 @@ macro_rules! embedded_resource {
     };
 }
 
+/// Links a resource with internal font dictionary
 #[macro_export]
 macro_rules! link_resource {
     ($resource_name : ident, $filename : expr) => {
@@ -55,9 +57,11 @@ pub use glutin::event::VirtualKeyCode;
 
 /// Implement this trait on your state struct, so the engine knows what to call on each tick.
 pub trait GameState: 'static {
+    /// Called every frame
     fn tick(&mut self, ctx: &mut Fractal);
 }
 
+/// Helper for easily printing things to the console
 pub fn log<S: ToString>(message: S) {
     println!("{}", message.to_string());
 }

@@ -1,3 +1,5 @@
+//! Utilities for having blocks of text on the screen
+
 use crate::codepage437::string_to_cp437;
 use crate::color;
 use crate::color::RGB;

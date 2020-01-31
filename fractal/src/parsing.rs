@@ -1,3 +1,5 @@
+//! Helper functions for parsing dice rolls
+
 use regex::Regex;
 use std::error;
 use std::fmt;

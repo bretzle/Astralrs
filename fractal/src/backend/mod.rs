@@ -1,3 +1,5 @@
+//! Contains all backend capabilities for OpenGL
+
 use crate::backend::framebuffer::Framebuffer;
 
 pub mod font;

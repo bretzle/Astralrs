@@ -1,3 +1,5 @@
+//! Color related structs and constants
+
 use crate::rex::XpColor;
 
 #[derive(PartialEq, Copy, Clone, Default, Debug, Serialize, Deserialize)]

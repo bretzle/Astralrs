@@ -1,3 +1,5 @@
+//! Helper functions for drawing boxes and thick bars
+
 use crate::codepage437::to_cp437;
 use crate::color::RGB;
 use crate::color;
